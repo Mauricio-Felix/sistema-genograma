@@ -1,43 +1,51 @@
 "use client";
 import Genogram from "./Genogram.js";
-import Explain from "./Explain.js";
 import { useEffect, useState } from "react";
 import {
-  // getFamiliaEmbarazadaById,
   getAbortoById,
   getFamiliaEnfermedadById,
 } from "@/app/action";
 
+/*
+Para generar el familiograma, es necesario establecer las relaciones familiares (parentesco) similar a 
+a la base de datos de la ficha familiar.En este caso, el algoritmo se basa en una raíz, que son los padres. 
+A partir de aquí, se pueden seguir las relaciones familiares de manera lógica. Los padres tendrían hijos, 
+y estos hijos (hermanos), a su vez, podrían tener hijos (nietos, primos) con su pareja (nuera o yerno). 
+Sin embargo, existe un caso especial que es el hijastro, que puede ser considerado como hijo o nieto 
+dependiendo del contexto familiar.
+*/
 
-//para dibujar el arbol familiar debo sacar las relacciones de aqui pero como el algoritmo se basa
-// en una raiz es decir papa y mama (por algo es arbol familiar) entonces por simple logica empezarian por los
-//padres luego si tienen hermano esos padres tienen hijos los hijos de los hijos tienen hijos y asi
-// se supone que si los padres tienen 4 hijos esos hijos son hermanos
+/*
+El algoritmo esta desarrollado para generar una familia de 3 generaciones, padres, hijos y nietos.
+*/
+
+/*
+A continuación se indica que relacion (parentesco) se usará en base a las simbologías presentadas por el cliente
+Formato 2021 para poder generar el familiograma
+*/
 const relacionesFamiliares = {
-  1: "JEFE/A DEL NUCLEO DEL HOGAR", //Por que poner esto? no le veo el sentido
-  2: "ESPOSO/A", //se supone que si tienen hijos estan casados
-  3: "CONVIVIENTE", //queda fuera del arbol por que no tiene asignado padres en comun
-  4: "HIJO/A",
-  5: "HIJASTRO/A",
-  6: "PADRE",
-  7: "MADRE",
-  8: "SUEGRO/A", //queda fuera del arbol por que no tiene asignado padres en comun
-  9: "YERNO", //queda fuera del arbol por que no tiene asignado padres en comun
-  10: "NUERA", //queda fuera del arbol por que no tiene asignado padres en comun
-  11: "NIETO/A",
-  12: "HERMANO/A",
-  13: "CUÑADO/A", //queda fuera del arbol por que no tiene asignado padres en comun
-  14: "ABUELO/A",
-  15: "TIO/A",
-  16: "PRIMO/A",
-  17: "OTRO FAMILIAR", //queda fuera del arbol por que no tiene asignado padres en comun
-  18: "NO FAMILIAR",
-  29: "GEMELOS",
-  30: "MELLIZOS",
+  1: "JEFE/A DEL NUCLEO DEL HOGAR", //no
+  2: "ESPOSO/A", //no
+  3: "CONVIVIENTE", //no
+  4: "HIJO/A", //si
+  5: "HIJASTRO/A", //si
+  6: "PADRE", //si
+  7: "MADRE", //si
+  8: "SUEGRO/A", 
+  9: "YERNO", //si
+  10: "NUERA", //si
+  11: "NIETO/A", //si
+  12: "HERMANO/A", //no
+  13: "CUÑADO/A", //no
+  14: "ABUELO/A", //no
+  15: "TIO/A", //no
+  16: "PRIMO/A", //no
+  17: "OTRO FAMILIAR", //no
+  18: "NO FAMILIAR", //no
+  29: "GEMELOS", //si (fue añadido luego)
+  30: "MELLIZOS", //si (fue añadido luego)
 };
 
-// Ejemplo de acceso a la descripción de una relación por su número
-// "JEFE/A DEL NUCLEO DEL HOGAR"
 
 function obetnerEtiquetas(dato) {
   const resultado = [];

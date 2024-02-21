@@ -343,13 +343,12 @@ export default function InfoPersonal(props) {
                 {" "}
                 Union Libre Separados
               </option>
-              <option value="VIUDO/A">Viudo/a</option>
               <option value={"UNIÓN LIBRE"}>Union Libre</option>
-              <option value={"SEPARACIÓN"}>Separacion</option>
-              <option value={"DIVORCIO"}>Divorcio</option>
-              <option value={"SOLTERO/A"}>Soltero/a</option>
-
+              <option value={"SEPARACIÓN"}>Separado/a</option>
+              <option value={"DIVORCIO"}>Divorciado/a</option>
               <option value={"UNIÓN CONSANGUÍNEA"}>Union Consaguinea</option>
+              <option value={"SOLTERO/A"}>Soltero/a</option>
+              
             </select>
           </div>
         </div>

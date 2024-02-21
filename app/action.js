@@ -5,10 +5,10 @@ import {
   obtenerCsctbedadesidRiesgos,
 } from "./utils/rangoEdad";
 import { obetnerIdsAndMerge } from "./utils/obtenerId";
-
-
 import { writeFile } from "fs/promises";
 import path, { format } from "path";
+
+//FUNCIONES DE REGISTRAR INFORMACION
 
 export async function saveFamilia(formData, id) {
 
@@ -86,33 +86,6 @@ export async function saveFamilia(formData, id) {
   }
 }
 
-
-export async function getParentesco() {
-  const result = await conn.query(`SELECT csctbparentescoid, nom_parentesco
-    FROM public.csctbparentesco;`);
-  return result.rows;
-}
-
-export async function getVacunas(anios, meses, dias) {
-  const rango_edad = obtenerCsctbedadesid(anios, meses, dias);
-  const result = await conn.query(
-    `SELECT 
-      csctbvacunas.csctbvacunasid, 
-      csctbedades.rango_edad, 
-      csctbvacunas.nom_vacuna
-    FROM 
-      public.csctbedades, 
-      public.csctbvacunas
-    WHERE 
-      csctbedades.csctbedadesid = csctbvacunas.csctbedadesid and
-      csctbvacunas.csctbedadesid = $1
-`,
-    [rango_edad]
-  );
-
-  return result.rows;
-}
-
 export async function saveEnfermedadVacunas(
   vacunas,
   enfermedades,
@@ -152,28 +125,6 @@ export async function saveEnfermedadVacunas(
   }
 }
 
-export async function searchEnfermedades(termino) {
-  const text = `
-  SELECT 
-  csctbenfermedad.csctbenfermedadid, 
-  csctbenfermedad.nom_enfermedad, 
-  csctbenfermedad.cog_enfermedad
-FROM 
-  public.csctbenfermedad
-WHERE 
-  cog_enfermedad LIKE '%' || $1 || '%' OR
-  LOWER(nom_enfermedad) LIKE '%' || LOWER($1) || '%'
-ORDER BY 
-  nom_enfermedad ASC;
-
-
-  `;
-  const values = [termino];
-  const result = await conn.query(text, values);
-
-  return result.rows;
-}
-
 export async function saveAborto(
   formData,
   id_familia
@@ -198,6 +149,95 @@ export async function saveAborto(
     return { error: "No se ha podido ingresar sus datos" };
   }
 }
+
+export async function saveDiagnosticoFamiliar(id_familia) {
+  try {
+    const result = await conn.query(
+      `INSERT INTO csctbdiagnosticofamiliar(
+        id_jefe_hogar)
+      VALUES ($1);`,
+      [id_familia]
+    );
+
+    return result.rows;
+  } catch (error) {
+    console.log(error);
+    return { error: "No se podido ingresar tu datos" };
+  }
+}
+
+export async function saveImagenGenograma(img, id) {
+  //const dataURL = await img;
+  const currentDate = new Date();
+  const formattedDate = currentDate.toISOString().slice(0, 10);
+  const filePath = path.join(
+    process.cwd(),
+    "public/genogramas",
+    `${id}_${formattedDate}.svg`
+  );
+  await writeFile(filePath, img);
+  const result = await conn.query(
+    `
+    INSERT INTO "csctbgenogramas"(
+    imagen,  "fecha_add_geno", id_jefe_hogar)
+    VALUES ( $1, current_timestamp, $2);
+  `,
+    [`${id}_${formattedDate}.svg`, id]
+  );
+
+  return filePath;
+}
+
+//FUNCIONES PARA EXTRAER INFORMACION
+
+export async function getParentesco() {
+  const result = await conn.query(`SELECT csctbparentescoid, nom_parentesco
+    FROM public.csctbparentesco;`);
+  return result.rows;
+}
+
+export async function getVacunas(anios, meses, dias) {
+  const rango_edad = obtenerCsctbedadesid(anios, meses, dias);
+  const result = await conn.query(
+    `SELECT 
+      csctbvacunas.csctbvacunasid, 
+      csctbedades.rango_edad, 
+      csctbvacunas.nom_vacuna
+    FROM 
+      public.csctbedades, 
+      public.csctbvacunas
+    WHERE 
+      csctbedades.csctbedadesid = csctbvacunas.csctbedadesid and
+      csctbvacunas.csctbedadesid = $1
+`,
+    [rango_edad]
+  );
+
+  return result.rows;
+}
+
+export async function searchEnfermedades(termino) {
+  const text = `
+  SELECT 
+  csctbenfermedad.csctbenfermedadid, 
+  csctbenfermedad.nom_enfermedad, 
+  csctbenfermedad.cog_enfermedad
+FROM 
+  public.csctbenfermedad
+WHERE 
+  cog_enfermedad LIKE '%' || $1 || '%' OR
+  LOWER(nom_enfermedad) LIKE '%' || LOWER($1) || '%'
+ORDER BY 
+  nom_enfermedad ASC;
+
+
+  `;
+  const values = [termino];
+  const result = await conn.query(text, values);
+
+  return result.rows;
+}
+
 
 export async function getFamiliares(accion, termino) {
   var text = "";
@@ -339,6 +379,86 @@ export async function getFamiliaById(id) {
   return result.rows;
 }
 
+export async function getFamiliaVacunaById(id) {
+  const result =
+    await conn.query(`SELECT csctbvacunafamiliaid, csctbvacunasid, csctbfamiliaid
+	FROM public.csctbvacunafamilia WHERE csctbfamiliaid = ${id};`);
+  return result.rows;
+}
+
+export async function getFamiliaEnfermedadById(id) {
+  const result = await conn.query(
+    `SELECT 
+csctbenferfam.csctbenfermeriesgoid,
+csctbenfermedad.nom_enfermedad, 
+csctbenfermedad.csctbenfermedadid,
+csctbenfermedad.cog_enfermedad
+FROM 
+public.csctbenferfam, 
+public.csctbenfermedad, 
+public.csctbfamilia
+WHERE 
+csctbenferfam.csctbfamiliaid = csctbfamilia.csctbfamiliaid AND
+csctbenferfam.csctbenfermedadid = csctbenfermedad.csctbenfermedadid and 
+csctbenferfam.csctbfamiliaid = $1;`,
+    [id]
+  );
+  return result.rows;
+}
+
+
+
+//Obtiene el id si esta embarazada
+export async function getFamiliarEmbarazada(id) {
+
+  const result = await conn.query(
+    `SELECT  csctbfamiliaid, n_abortos_espontaneos
+      FROM public.csctbembarazadas WHERE csctbfamiliaid= $1 LIMIT 1;
+  `,
+    [id]
+  );
+  return result.rows;
+}
+
+
+export async function getAbortoById(id) {
+  const result = await conn.query(
+    `SELECT 
+  csctbembarazadas.csctbembarazadasid, 
+  csctbembarazadas.n_abortos_espontaneos, 
+  csctbembarazadas.n_abortos_inducidos,
+  csctbembarazadas.csctbfamiliaid
+FROM 
+  public.csctbembarazadas, 
+  public.csctbfamilia
+WHERE 
+  csctbembarazadas.csctbfamiliaid = csctbfamilia.csctbfamiliaid and
+  csctbfamilia.csctbfamiliaid = $1 LIMIT 1;
+`,
+    [id]
+  );
+  return result.rows;
+}
+
+export async function getDiagnosticoFamiliar(id_familia) {
+  const result = await conn.query(
+    `SELECT csctbdiagnosticoid, tipo_familia,
+     ciclo_vital, primer_hijo,
+      hijo_edad_preescolar,
+       hijo_edad_escolar,
+        hijo_edad_adolescente,
+         hijo_edad_adulta,
+          apgar_familiar,
+          id_jefe_hogar,
+           observacion
+    FROM csctbdiagnosticofamiliar
+    WHERE id_jefe_hogar = $1;`,
+    [id_familia]
+  );
+  return result.rows;
+}
+
+//FUNCIONES PARA EDITAR DE INFORMACION
 
 export async function updateFamiliaById(formData, id) {
   try {
@@ -386,13 +506,6 @@ export async function updateFamiliaById(formData, id) {
     console.log(error);
     return { error: "no se actualizaron los datos" };
   }
-}
-
-export async function getFamiliaVacunaById(id) {
-  const result =
-    await conn.query(`SELECT csctbvacunafamiliaid, csctbvacunasid, csctbfamiliaid
-	FROM public.csctbvacunafamilia WHERE csctbfamiliaid = ${id};`);
-  return result.rows;
 }
 
 export async function updateVacunas(
@@ -456,61 +569,6 @@ export async function updateEnfermdad({
   }
 }
 
-export async function getFamiliaEnfermedadById(id) {
-  const result = await conn.query(
-    `SELECT 
-csctbenferfam.csctbenfermeriesgoid,
-csctbenfermedad.nom_enfermedad, 
-csctbenfermedad.csctbenfermedadid,
-csctbenfermedad.cog_enfermedad
-FROM 
-public.csctbenferfam, 
-public.csctbenfermedad, 
-public.csctbfamilia
-WHERE 
-csctbenferfam.csctbfamiliaid = csctbfamilia.csctbfamiliaid AND
-csctbenferfam.csctbenfermedadid = csctbenfermedad.csctbenfermedadid and 
-csctbenferfam.csctbfamiliaid = $1;`,
-    [id]
-  );
-  return result.rows;
-}
-
-
-
-//Obtiene el id si esta embarazada
-export async function getFamiliarEmbarazada(id) {
- 
-  const result = await conn.query(
-    `SELECT  csctbfamiliaid, n_abortos_espontaneos
-      FROM public.csctbembarazadas WHERE csctbfamiliaid= $1 LIMIT 1;
-  `,
-    [id]
-  );
-  return result.rows;
-}
-
-
-export async function getAbortoById(id) {
-  const result = await conn.query(
-    `SELECT 
-  csctbembarazadas.csctbembarazadasid, 
-  csctbembarazadas.n_abortos_espontaneos, 
-  csctbembarazadas.n_abortos_inducidos,
-  csctbembarazadas.csctbfamiliaid
-FROM 
-  public.csctbembarazadas, 
-  public.csctbfamilia
-WHERE 
-  csctbembarazadas.csctbfamiliaid = csctbfamilia.csctbfamiliaid and
-  csctbfamilia.csctbfamiliaid = $1 LIMIT 1;
-`,
-    [id]
-  );
-  return result.rows;
-}
-
-
 export async function updateFamiliaEmbarazadaById(formData, id_familia) {
   try {
     const result = await conn.query(
@@ -571,75 +629,6 @@ export async function updateAbortoById(formData, id_familia) {
   }
 }
 
-// export async function saveDiagnosticoFamiliar(id_familia) {
-//   try {
-//     const result = await conn.query(
-//       `INSERT INTO csctbtipofamilia(
-//         idjefe_hogar_familia)
-//       VALUES ($1);`,
-//       [id_familia]
-//     );
-
-//     return result.rows;
-//   } catch (error) {
-//     console.log(error);
-//     return { error: "No se podido ingresar tu datos" };
-//   }
-// }
-
-export async function saveDiagnosticoFamiliar(id_familia) {
-  try {
-    const result = await conn.query(
-      `INSERT INTO csctbdiagnosticofamiliar(
-        id_jefe_hogar)
-      VALUES ($1);`,
-      [id_familia]
-    );
-
-    return result.rows;
-  } catch (error) {
-    console.log(error);
-    return { error: "No se podido ingresar tu datos" };
-  }
-}
-
-// export async function updateDiagnosticoFamiliar(data, id_familia) {
-//   try {
-//     const result = await conn.query(
-//       `UPDATE public.csctbtipofamilia
-//       SET  
-//       tipo_familia=$1, 
-//       ciclo_vital=$2,
-//        primer_hijo=$3, 
-//       hijo_edad_preescolar=$4, 
-//       hijo_edad_escolar=$5, 
-//       hijo_edad_adolescente=$6, 
-//       hijo_edad_adulta=$7, 
-//       apgar_familiar=$8,
-//       observacion = $9
-//       WHERE idjefe_hogar_familia = $10;`,
-//       [
-//         data.tipoFamilia,
-//         data.cicloVital,
-//         data.primerHijo,
-//         data.hijoEdadPreescolar,
-//         data.hijoEdadEscolar,
-//         data.hijoEdadAdolescente,
-//         data.hijoEdadAdulta,
-//         data.apgarFamiliar,
-//         data.observacion,
-
-//         id_familia,
-//       ]
-//     );
-
-//     return result.rows;
-//   } catch (error) {
-//     console.log(error);
-//     return { error: "No se podido ingresar tu datos" };
-//   }
-// }
-
 export async function updateDiagnosticoFamiliar(data, id_familia) {
   try {
     const result = await conn.query(
@@ -677,82 +666,8 @@ export async function updateDiagnosticoFamiliar(data, id_familia) {
   }
 }
 
-// export async function getDiagnosticoFamiliar(id_familia) {
-//   const result = await conn.query(
-//     `SELECT idcsctbtipofamilia, tipo_familia,
-//      ciclo_vital, primer_hijo,
-//       hijo_edad_preescolar,
-//        hijo_edad_escolar,
-//         hijo_edad_adolescente,
-//          hijo_edad_adulta,
-//           apgar_familiar,
-//            idjefe_hogar_familia,
-//            observacion
-//     FROM csctbtipofamilia
-//     WHERE idjefe_hogar_familia = $1;`,
-//     [id_familia]
-//   );
-//   return result.rows;
-// }
 
-export async function getDiagnosticoFamiliar(id_familia) {
-  const result = await conn.query(
-    `SELECT csctbdiagnosticoid, tipo_familia,
-     ciclo_vital, primer_hijo,
-      hijo_edad_preescolar,
-       hijo_edad_escolar,
-        hijo_edad_adolescente,
-         hijo_edad_adulta,
-          apgar_familiar,
-          id_jefe_hogar,
-           observacion
-    FROM csctbdiagnosticofamiliar
-    WHERE id_jefe_hogar = $1;`,
-    [id_familia]
-  );
-  return result.rows;
-}
 
-// export async function saveImagenGenograma(img, id) {
-//   //const dataURL = await img;
-//   const currentDate = new Date();
-//   const formattedDate = currentDate.toISOString().slice(0, 10);
-//   const filePath = path.join(
-//     process.cwd(),
-//     "public/genogramas",
-//     `${id}_${formattedDate}.svg`
-//   );
-//   await writeFile(filePath, img);
-//   const result = await conn.query(
-//     `
-//     INSERT INTO "csctbHistorialGenograma"(
-//     imagen,  "fechaRegistro", idjefedehogar)
-//     VALUES ( $1, current_timestamp, $2);
-//   `,
-//     [`${id}_${formattedDate}.svg`, id]
-//   );
 
-//   return filePath;
-// }
 
-export async function saveImagenGenograma(img, id) {
-  //const dataURL = await img;
-  const currentDate = new Date();
-  const formattedDate = currentDate.toISOString().slice(0, 10);
-  const filePath = path.join(
-    process.cwd(),
-    "public/genogramas",
-    `${id}_${formattedDate}.svg`
-  );
-  await writeFile(filePath, img);
-  const result = await conn.query(
-    `
-    INSERT INTO "csctbgenogramas"(
-    imagen,  "fecha_add_geno", id_jefe_hogar)
-    VALUES ( $1, current_timestamp, $2);
-  `,
-    [`${id}_${formattedDate}.svg`, id]
-  );
 
-  return filePath;
-}
