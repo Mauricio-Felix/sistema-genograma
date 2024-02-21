@@ -1,5 +1,5 @@
 "use client";
-import { guardarEnfermedadVacunas } from "@/app/action";
+import { saveEnfermedadVacunas } from "@/app/action";
 import { useForm } from "react-hook-form";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -39,7 +39,7 @@ export default function CheckVacuna({ enfermedades, vacunas }) {
     formState: { errors },
   } = useForm();
   const onSubmit = handleSubmit(async (data) => {
-    const result = await guardarEnfermedadVacunas(
+    const result = await saveEnfermedadVacunas(
       data,
       listaEnfermedades,
       session.user.email.id_familia

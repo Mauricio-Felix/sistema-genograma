@@ -8,7 +8,7 @@ if (!conn) {
     password: "1234",
     host: 'localhost',
     port: '5432',
-    database: 'fichav31',
+    database: 'cscdb_chambo_local',
   });
 }
 

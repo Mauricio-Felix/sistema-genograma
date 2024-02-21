@@ -1,21 +1,16 @@
 import {
-
   getFamiliarEmbarazada,
   getFamiliaById,
-
   getParentesco,
-
 } from "@/app/action";
 import InfoPersonal from "@/app/ui/infoPersonal/inforPersonal";
 import Vacuna from "@/app/ui/vacunas/vacuna";
 import IndexEmbarazada from "@/app/ui/embarazada";
 
 export default async function AgregarPersonaEdit({ params, searchParams }) {
-
   const parentescos = await getParentesco();
   const [datosFamiliar] = await getFamiliaById(params.id);
   const familiaEmbarazo = await getFamiliarEmbarazada(params.id);
-
 
   return (
     <>
@@ -49,11 +44,8 @@ export default async function AgregarPersonaEdit({ params, searchParams }) {
               Enfermedades
             </button>
           </li>
-          
-          <li
-            className="nav-item"
-            role="presentation"
-          >
+
+          <li className="nav-item" role="presentation">
             <button
               className="nav-link"
               id="pills-embarazada-tab"
@@ -84,11 +76,12 @@ export default async function AgregarPersonaEdit({ params, searchParams }) {
               parentescos={parentescos}
               datosFamiliar={datosFamiliar}
               data={{
-                embarazo: familiaEmbarazo[0]?.n_abortos_espontaneos == null ? false : true,
+                embarazo:
+                  familiaEmbarazo[0]?.n_abortos_espontaneos == null
+                    ? false
+                    : true,
               }}
-            >
-              
-            </InfoPersonal>
+            ></InfoPersonal>
           </div>
           <div
             className="tab-pane fade"
@@ -104,14 +97,16 @@ export default async function AgregarPersonaEdit({ params, searchParams }) {
                 dias: datosFamiliar.dias,
                 nombre: datosFamiliar.nom_fam + " " + datosFamiliar.ape_fam,
                 parentesco: datosFamiliar.nom_parentesco,
-                embarazo: familiaEmbarazo[0]?.n_abortos_espontaneos == null ? false : true,
+                embarazo:
+                  familiaEmbarazo[0]?.n_abortos_espontaneos == null
+                    ? false
+                    : true,
               }}
               params={searchParams}
               id_familia={params.id}
             ></Vacuna>
           </div>
 
-          
           <div
             className="tab-pane fade"
             id="pills-embarazada"
@@ -125,7 +120,10 @@ export default async function AgregarPersonaEdit({ params, searchParams }) {
                 data={{
                   nombre: datosFamiliar.nom_fam + " " + datosFamiliar.ape_fam,
                   parentesco: datosFamiliar.nom_parentesco,
-                  embarazo: familiaEmbarazo[0]?.n_abortos_espontaneos == null ? false : true,
+                  embarazo:
+                    familiaEmbarazo[0]?.n_abortos_espontaneos == null
+                      ? false
+                      : true,
                 }}
               ></IndexEmbarazada>
             )}

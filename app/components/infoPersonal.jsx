@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { insertTipoFamilia } from "../action";
+import { saveDiagnosticoFamiliar } from "../action";
 
 export default function InfoPersonal(props) {
   const { data: session, update } = useSession();
@@ -43,7 +43,7 @@ export default function InfoPersonal(props) {
           },
         });
         console.log(resul[0].csctbfamiliaid);
-        const insert = await insertTipoFamilia(resul[0].csctbfamiliaid);
+        const insert = await saveDiagnosticoFamiliar(resul[0].csctbfamiliaid);
         insert?.error ? console.log(insert.error) : null;
       } else {
         update({

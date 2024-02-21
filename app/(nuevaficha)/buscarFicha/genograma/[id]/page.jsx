@@ -3,9 +3,9 @@ import MostrarGenograma from "@/app/components/genogramaFamiliar/page";
 import { useEffect, useState } from "react";
 import {
   getFamiliares,
-  getTipoFamilia,
+  getDiagnosticoFamiliar,
   updateTipoFamilia,
-  //getFamiliaEmbarazadaById,
+  updateDiagnosticoFamiliar
 } from "@/app/action";
 import { useForm } from "react-hook-form";
 import Explain from "@/app/components/genogramaFamiliar/Explain";
@@ -57,12 +57,9 @@ export default function GenogramaPage({ params, searchParams }) {
       return await getFamiliares(1, params.id);
     };
     const getTipoFamiliaC = async () => {
-      return await getTipoFamilia(params.id);
+      return await getDiagnosticoFamiliar(params.id);
     };
-    // var idPanel2 = document.getElementById("panel2")
-    // var idPanel3 = document.getElementById("panel2")
-    // var idPanel4 = document.getElementById("panel2")
-
+   
     getTipoFamiliaC().then((data) => {
       setTipolistaTipoFamilia(data[0]);
     });
@@ -88,7 +85,7 @@ export default function GenogramaPage({ params, searchParams }) {
   useEffect(() => {
     i++;
     const updateTipoFamaliaUse = async () => {
-      await updateTipoFamilia(
+      await updateDiagnosticoFamiliar(
         {
           tipoFamilia: watch("tipoFamilia"),
           hijoEdadAdulta: watch("hijoEdadAdulta"),
