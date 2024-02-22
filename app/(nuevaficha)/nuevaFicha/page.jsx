@@ -27,7 +27,8 @@ function NuevaFamilia() {
           style={{ height: "30%", margin: "20px" }}
           className="card text-center"
         >
-          <Modal tittle="EL primer integrante debe ser el padre">
+          <Modal tittle="Para construir de forma correcta un familiograma, se empieza agregando al padre, luego se añade a la madre y 
+          los hijos. Si el hijo tiene pareja, se agrega a la esposa como nuera y los hijos como nietos.">
             <div className="d-flex w-50 justify-content-around align-items-center">
               <button
                 data-bs-dismiss="modal"
@@ -35,14 +36,14 @@ function NuevaFamilia() {
                 onClick={handlePusAgregarPersona}
                 className="btn btn-primary"
               >
-                Aceptar
+                Entendido
               </button>
             </div>
           </Modal>
           <ModalGenerico
             show={modalShow}
             tittle={
-              "Esta seguro que no va a ingresar mas familiares a su ficha?"
+              "¿Esta seguro que no va a ingresar mas familiares a su ficha actual?"
             }
           >
             <div className=" h-25 d-flex justify-content-between mt-2 align-items-center">

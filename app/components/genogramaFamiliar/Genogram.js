@@ -5,9 +5,6 @@ import React, { Component, useState } from "react";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
 import { saveImagenGenograma } from "@/app/action";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
 import Toast from "react-bootstrap/Toast";
 
 var genoData;
@@ -313,7 +310,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             verticalAlignment: go.Spot.Center,
             maxSize: new go.Size(80, NaN),
             font: "16px serif",
-            editable: true,
+            editable: false,
           },
           new go.Binding("text", "anios")
         )
@@ -321,13 +318,13 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
 
       $(
         go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: true },
+        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
         new go.Binding("text", "n")
       ),
 
       $(
         go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: true },
+        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: false },
         new go.Binding("text", "codigo")
       )
     )
@@ -425,19 +422,19 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             verticalAlignment: go.Spot.Center,
             maxSize: new go.Size(80, NaN),
             font: "16px serif",
-            editable: true,
+            editable: false,
           },
           new go.Binding("text", "anios")
         )
       ),
       $(
         go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: true },
+        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
         new go.Binding("text", "n")
       ),
       $(
         go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: true },
+        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: false },
         new go.Binding("text", "codigo")
       )
     )
@@ -643,7 +640,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             verticalAlignment: go.Spot.Center,
             maxSize: new go.Size(80, NaN),
             font: "16px serif",
-            editable: true,
+            editable: false,
           },
           new go.Binding("text", "anios")
         )
@@ -651,12 +648,12 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
 
       $(
         go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: true },
+        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
         new go.Binding("text", "n")
       ),
       $(
         go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: true },
+        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: false },
         new go.Binding("text", "codigo")
       )
     )
@@ -763,7 +760,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             verticalAlignment: go.Spot.Center,
             maxSize: new go.Size(80, NaN),
             font: "16px serif",
-            editable: true,
+            editable: false,
           },
           new go.Binding("text", "anios")
         )
@@ -771,12 +768,12 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
 
       $(
         go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: true },
+        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
         new go.Binding("text", "n")
       ),
       $(
         go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: true },
+        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: false },
         new go.Binding("text", "codigo")
       )
     )

@@ -118,12 +118,15 @@ export default function InfoPersonal(props) {
               {...register("nombres", {
                 required: {
                   value: true,
-                  message: "Ingrese los nombres",
+                  message: "Este campo es obligatorio",
                 },
               })}
               type="text"
               className="form-control"
             />
+            {errors.nombres && (
+              <p class="text-danger">{errors.nombres.message}</p>
+            )}
           </div>
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             {" "}
@@ -134,12 +137,15 @@ export default function InfoPersonal(props) {
               {...register("apellidos", {
                 required: {
                   value: true,
-                  message: "Ingrese su apellido",
+                  message: "Este campo es obligatorio.",
                 },
               })}
               type="text"
               className="form-control"
             />
+            {errors.apellidos && (
+              <p class="text-danger">{errors.apellidos.message}</p>
+            )}
           </div>
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             {" "}
@@ -150,13 +156,16 @@ export default function InfoPersonal(props) {
               {...register("cedula", {
                 required: {
                   value: true,
-                  message: "Ingrese la cedula",
+                  message: "Este campo es obligatorio.",
                 },
                 maxLength: 10,
               })}
               type="number"
               className="form-control"
             />
+            {errors.cedula && (
+              <p class="text-danger">{errors.cedula.message}</p>
+            )}
           </div>
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <div className="d-flex justify-content-between">
@@ -168,7 +177,7 @@ export default function InfoPersonal(props) {
                   {...register("fechaNacimiento", {
                     required: {
                       value: true,
-                      message: "Seleccione su fecha de nacimiento",
+                      message: "Este campo es obligatorio.",
                     },
                     validate: (value) => {
                       const fechaNacimiento = new Date(value);
@@ -240,6 +249,9 @@ export default function InfoPersonal(props) {
                 </div>
               </div>
             </div>
+            {errors.fechaNacimiento && (
+              <p class="text-danger">{errors.fechaNacimiento.message}</p>
+            )}
           </div>
         </div>
 
@@ -252,7 +264,7 @@ export default function InfoPersonal(props) {
               {...register("genero", {
                 required: {
                   value: true,
-                  message: "Seleccione el genero",
+                  message: "Este campo es obligatorio.",
                 },
                 validate: (value) => value !== "",
               })}
@@ -263,6 +275,9 @@ export default function InfoPersonal(props) {
               <option value="MASCULINO">Masculino</option>
               <option value="FEMENINO">Femenino</option>
             </select>
+            {errors.genero && (
+              <p class="text-danger">{errors.genero.message}</p>
+            )}
           </div>
 
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
@@ -303,7 +318,7 @@ export default function InfoPersonal(props) {
               {...register("parentesco", {
                 required: {
                   value: true,
-                  message: "Selecccione el parentesco",
+                  message: "Este campo es obligatorio.",
                 },
                 validate: (value) => value !== "",
               })}
@@ -320,6 +335,9 @@ export default function InfoPersonal(props) {
                 </option>
               ))}
             </select>
+            {errors.parentesco && (
+              <p class="text-danger">{errors.parentesco.message}</p>
+            )}
           </div>
 
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
@@ -330,7 +348,7 @@ export default function InfoPersonal(props) {
               {...register("estadoCivil", {
                 required: {
                   value: true,
-                  message: "Seleccione un estado civil",
+                  message: "Este campo es obligatorio.",
                 },
                 validate: (value) => value !== "",
               })}
@@ -348,14 +366,48 @@ export default function InfoPersonal(props) {
               <option value={"DIVORCIO"}>Divorciado/a</option>
               <option value={"UNIÓN CONSANGUÍNEA"}>Union Consaguinea</option>
               <option value={"SOLTERO/A"}>Soltero/a</option>
-              
             </select>
+            {errors.estadoCivil && (
+              <p class="text-danger">{errors.estadoCivil.message}</p>
+            )}
           </div>
         </div>
 
         <div className="row mb-3">
-
-        <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+          <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            {watch("estadoCivil") !== "SOLTERO/A" ? (
+              <>
+                <label className="form-label">
+                  <h5>Fecha de Union</h5>
+                </label>
+                <input
+                  {...register("fechaUnion", {
+                    required: {
+                      value: true,
+                      message: "Este campo es obligatorio",
+                    },
+                    validate: (value) => {
+                      if (value === "") {
+                        return true;
+                      }
+                      const fechaNacimiento = new Date(value);
+                      const fechaActual = new Date();
+                      if (fechaNacimiento > fechaActual) {
+                        return false;
+                      }
+                      return true;
+                    },
+                  })}
+                  type="date"
+                  className="form-control"
+                />
+                {errors.fechaUnion && (
+                  <p className="text-danger">{errors.fechaUnion.message}</p>
+                )}
+              </>
+            ) : null}
+          </div>
+          {/* <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <div className="d-flex justify-content-between">
               <div className="w-50" style={{ marginRight: "3px" }}>
                 <label className="form-label">
@@ -363,8 +415,12 @@ export default function InfoPersonal(props) {
                 </label>
                 <input
                   {...register("fechaUnion", {
+                    required: {
+                      value: true,
+                      message: "Este campo es obligatorio.",
+                    },
                     validate: (value) => {
-                      //console.log(value)
+
                       if (value == "") {
                         console.log(value);
                         return true;
@@ -388,8 +444,8 @@ export default function InfoPersonal(props) {
                 />
               </div>
             </div>
-          </div>
-        
+          </div> */}
+
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             {" "}
             <label className="form-label">

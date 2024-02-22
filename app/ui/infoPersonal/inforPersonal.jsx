@@ -14,11 +14,7 @@ export default function InfoPersonal(props) {
     setValue,
     formState: { errors },
   } = useForm();
-  const {
-    parentescos,
-    datosFamiliar,
-    data,
-  } = props;
+  const { parentescos, datosFamiliar, data } = props;
 
   const [isembarazada, setisembarazada] = useState(data.embarazo);
   const onSubmit = handleSubmit(async (data) => {
@@ -65,7 +61,6 @@ export default function InfoPersonal(props) {
         },
         params.id
       );
-
     }
   };
 
@@ -82,7 +77,7 @@ export default function InfoPersonal(props) {
       // console.log("nada")
       embarazoNull().then(() => {
         //console.log("listo")
-        refresh()
+        refresh();
       });
     }
   }, [watch("embarazada"), isembarazada]);
@@ -127,13 +122,16 @@ export default function InfoPersonal(props) {
               {...register("nombres", {
                 required: {
                   value: true,
-                  message: "Ingrese los nombres",
+                  message: "Este campo es obligatorio",
                 },
                 value: datosFamiliar.nom_fam,
               })}
               type="text"
               className="form-control"
             />
+            {errors.nombres && (
+              <p class="text-danger">{errors.nombres.message}</p>
+            )}
           </div>
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             {" "}
@@ -142,13 +140,16 @@ export default function InfoPersonal(props) {
               {...register("apellidos", {
                 required: {
                   value: true,
-                  message: "Ingrese su apellido",
+                  message: "Este campo es obligatorio.",
                 },
                 value: datosFamiliar.ape_fam,
               })}
               type="text"
               className="form-control"
             />
+            {errors.apellidos && (
+              <p class="text-danger">{errors.apellidos.message}</p>
+            )}
           </div>
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             {" "}
@@ -157,7 +158,7 @@ export default function InfoPersonal(props) {
               {...register("cedula", {
                 required: {
                   value: true,
-                  message: "Ingrese la cedula",
+                  message: "Este campo es obligatorio.",
                 },
                 maxLength: 10,
                 value: datosFamiliar.cedula_fam,
@@ -165,6 +166,9 @@ export default function InfoPersonal(props) {
               type="number"
               className="form-control"
             />
+            {errors.cedula && (
+              <p class="text-danger">{errors.cedula.message}</p>
+            )}
           </div>
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <div className="d-flex justify-content-between">
@@ -174,7 +178,7 @@ export default function InfoPersonal(props) {
                   {...register("fechaNacimiento", {
                     required: {
                       value: true,
-                      message: "Seleccione su fecha de nacimiento",
+                      message: "Este campo es obligatorio.",
                     },
                     value: new Date(datosFamiliar.fecha_na_fam)
                       .toISOString()
@@ -244,6 +248,9 @@ export default function InfoPersonal(props) {
                 </div>
               </div>
             </div>
+            {errors.fechaNacimiento && (
+              <p class="text-danger">{errors.fechaNacimiento.message}</p>
+            )}
           </div>
         </div>
 
@@ -254,7 +261,7 @@ export default function InfoPersonal(props) {
               {...register("genero", {
                 required: {
                   value: true,
-                  message: "Seleccione el genero",
+                  message: "Este campo es obligatorio.",
                 },
                 value: datosFamiliar.genero,
                 validate: (value) => value !== "",
@@ -266,6 +273,9 @@ export default function InfoPersonal(props) {
               <option value="MASCULINO">Masculino</option>
               <option value="FEMENINO">Femenino</option>
             </select>
+            {errors.genero && (
+              <p class="text-danger">{errors.genero.message}</p>
+            )}
           </div>
 
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
@@ -317,7 +327,7 @@ export default function InfoPersonal(props) {
               {...register("parentesco", {
                 required: {
                   value: true,
-                  message: "Selecccione el parentesco",
+                  message: "Este campo es obligatorio.",
                 },
                 value: datosFamiliar.csctbparentescoid,
 
@@ -336,15 +346,18 @@ export default function InfoPersonal(props) {
                 </option>
               ))}
             </select>
+            {errors.parentesco && (
+              <p class="text-danger">{errors.parentesco.message}</p>
+            )}
           </div>
-         
+
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <label className="form-label">Estado Civil</label>
             <select
               {...register("estadoCivil", {
                 required: {
                   value: true,
-                  message: "Seleccione un estado civil",
+                  message: "Este campo es obligatorio.",
                 },
                 value: datosFamiliar.estado_civil,
 
@@ -365,52 +378,66 @@ export default function InfoPersonal(props) {
               <option value={"UNIÓN CONSANGUÍNEA"}>Union Consaguinea</option>
               <option value={"SOLTERO/A"}>Soltero/a</option>
             </select>
+            {errors.estadoCivil && (
+              <p class="text-danger">{errors.estadoCivil.message}</p>
+            )}
           </div>
         </div>
 
-        
         <div className="row mt-2">
-          
-        <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+          <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <div className="d-flex justify-content-between">
               <div className="w-50" style={{ marginRight: "3px" }}>
-                <label className="form-label">
-                  <h5>Fecha de Union</h5>
-                </label>
+                {watch("estadoCivil") !== "SOLTERO/A" ? (
+                  <>
+                    <label className="form-label">
+                      <h5>Fecha de Union</h5>
+                    </label>
 
-                <input
-                  {...register("fechaUnion", {
-                    value: new Date(datosFamiliar.fecha_union)
-                      .toISOString()
-                      .split("T")[0],
-                    validate: (value) => {
+                    <input
+                      {...register("fechaUnion", {
+                        required: {
+                          value: true,
+                          message: "Este campo es obligatorio",
+                        },
+                        value: new Date(datosFamiliar.fecha_union)
+                          .toISOString()
+                          .split("T")[0],
+                        validate: (value) => {
+                          console.log(value);
+                          if (value == "") {
+                            return true;
+                          }
+                          const fechaNacimiento = new Date(value);
+                          const fechaActual = new Date();
 
-                      console.log(value)
-                      if (value == "") {
-                        return true
-                      }
-                      const fechaNacimiento = new Date(value);
-                      const fechaActual = new Date();
+                          // Verificar si la fecha de nacimiento es en el futuro
+                          if (fechaNacimiento > fechaActual) {
+                            return false;
+                          }
 
-                      // Verificar si la fecha de nacimiento es en el futuro
-                      if (fechaNacimiento > fechaActual) {
-                        return false;
-                      }
+                          // Resto de la lógica de validación aquí (si es necesario)
 
-                      // Resto de la lógica de validación aquí (si es necesario)
-
-                      return true; // Si la fecha de nacimiento es válida
-                    },
-                  })}
-                  type="date"
-                  className="form-control"
-                />
+                          return true; // Si la fecha de nacimiento es válida
+                        },
+                      })}
+                      type="date"
+                      className="form-control"
+                    />
+                    {errors.fechaUnion && (
+                      <p className="text-danger">{errors.fechaUnion.message}</p>
+                    )}
+                  </>
+                ) : null}
               </div>
             </div>
           </div>
+
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             {" "}
-            <label className="form-label">Fallecido</label>
+            <label className="form-label">
+              <h5>Fallecido</h5>
+            </label>
             <div>
               <div className="form-check form-check-inline">
                 <input
