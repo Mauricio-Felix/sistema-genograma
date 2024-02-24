@@ -89,7 +89,9 @@ function initDiagram() {
     "F M0 0 L80 0 B-90 90 80 20 20 20 L100 100 20 100 B90 90 20 80 20 20z"
   );
   var flecha = go.Geometry.parse(
-    "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
+    "M8 1 a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
+    // "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
+    // "M8 1a.5.5 0 0 1 .5.5v5.5l1.146-1.146a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 7.5V1.5A.5.5 0 0 1 8 1z"
   );
   function maleGeometry(a) {
     switch (a) {
@@ -237,8 +239,8 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
               go.Shape,
               {
                 strokeWidth: 1,
-                height: 40,
-                width: 30,
+                height: 20,
+                width: 10,
                 margin: 2,
                 angle: -25,
               },
@@ -253,7 +255,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
                 }
               })
             ),
-            { alignment: new go.Spot(0, 1, -40, 0) }
+            { alignment: new go.Spot(0, 1, -50, 0) }
           ),
         },
         new go.Binding("itemArray", "a")
@@ -270,21 +272,18 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             width: 40,
             height: 40,
             strokeWidth: 2,
-            //background:"red",
             fill: "white",
             stroke: "#919191",
             portId: "",
           },
           new go.Binding("fill", "a", (e) => {
-            //console.log(e);
             if (e.includes("NF")) {
-              return "#59ff04";
+              return "#BB8FCE";
             } else {
               return "white";
             }
           })
         ),
-        //new go.Binding("itemArray", "a"),
 
         $(
           go.Panel,
@@ -315,7 +314,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("text", "anios")
         )
       ),
-
+      
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
@@ -340,7 +339,6 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
         locationObjectName: "ICON",
         selectionObjectName: "ICON",
       },
-      //new go.Binding("itemArray", "a"),
 
       $(
         go.Panel,
@@ -352,12 +350,12 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
               go.Shape,
               {
                 strokeWidth: 1,
-                height: 40,
-                width: 30,
+                height: 20,
+                width: 10,
                 margin: 2,
-
-                angle: 20,
+                angle: -25,
               },
+
               new go.Binding("stroke", "", colorApuntador),
               new go.Binding("fill", "", colorApuntador),
               new go.Binding("geometry", "", (e) => {
@@ -368,7 +366,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
                 }
               })
             ),
-            { alignment: new go.Spot(0, 1, 50, 0) }
+            { alignment: new go.Spot(0, 1, -50, 0) }
           ),
         },
         new go.Binding("itemArray", "a")
@@ -392,7 +390,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("fill", "a", (e) => {
             //console.log(e);
             if (e.includes("NF")) {
-              return "#59ff04";
+              return "#BB8FCE";
             } else {
               return "white";
             }
@@ -427,11 +425,13 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("text", "anios")
         )
       ),
+
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
         new go.Binding("text", "n")
       ),
+      
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(100, NaN), editable: false },
@@ -439,6 +439,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
       )
     )
   );
+
   //Embarazada
   diagram.nodeTemplateMap.add(
     "embarazada", // Miscarriage
@@ -537,6 +538,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
       )
     )
   );
+
   //hijastro
   diagram.nodeTemplateMap.add(
     "hijastro", // Miscarriage
@@ -558,12 +560,12 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
               go.Shape,
               {
                 strokeWidth: 1,
-                height: 40,
-                width: 30,
+                height: 20,
+                width: 10,
                 margin: 2,
                 angle: -25,
-                //alignment: go.Spot.TopLeft
               },
+
               new go.Binding("stroke", "", colorApuntador),
               new go.Binding("fill", "", colorApuntador),
               new go.Binding("geometry", "", (e) => {
@@ -574,13 +576,11 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
                 }
               })
             ),
-            { alignment: new go.Spot(0, 1, -40, 0) }
+            { alignment: new go.Spot(0, 1, -50, 0) }
           ),
-          alignment: go.Spot.TopLeft,
         },
         new go.Binding("itemArray", "a")
       ),
-      //new go.Binding("itemArray", "a"),
 
       $(
         go.Panel,
@@ -609,7 +609,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("background", "a", (e) => {
             //console.log(e.includes("NF"));
             if (e.includes("NF")) {
-              return "#59ff04";
+              return "#BB8FCE";
             } else {
               return "white";
             }
@@ -645,7 +645,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("text", "anios")
         )
       ),
-
+      
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
@@ -659,6 +659,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
     )
   );
 
+  //HIjastra
   diagram.nodeTemplateMap.add(
     "hijastra", // Miscarriage
     $(
@@ -669,6 +670,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
         locationObjectName: "ICON",
         selectionObjectName: "ICON",
       },
+
       $(
         go.Panel,
         "Spot",
@@ -679,12 +681,12 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
               go.Shape,
               {
                 strokeWidth: 1,
-                height: 40,
-                width: 30,
+                height: 20,
+                width: 10,
                 margin: 2,
                 angle: -25,
-                //alignment: go.Spot.TopLeft
               },
+
               new go.Binding("stroke", "", colorApuntador),
               new go.Binding("fill", "", colorApuntador),
               new go.Binding("geometry", "", (e) => {
@@ -695,14 +697,12 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
                 }
               })
             ),
-            { alignment: new go.Spot(0, 1, -40, 0) }
+            { alignment: new go.Spot(0, 1, -50, 0) }
           ),
-          alignment: go.Spot.TopLeft,
         },
         new go.Binding("itemArray", "a")
       ),
-      //new go.Binding("itemArray", "a"),
-
+      
       $(
         go.Panel,
         "Auto",
@@ -730,7 +730,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("background", "a", (e) => {
             //console.log(e);
             if (e.includes("NF")) {
-              return "#59ff04";
+              return "#BB8FCE";
             } else {
               return "white";
             }

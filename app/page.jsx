@@ -101,6 +101,13 @@ export default function Home() {
             >
               Buscar Familia
             </button>
+            <button
+              onClick={() => window.open('https://drive.google.com/file/d/1GywQNVmN5OLe2oSyxqddjPWBukk1vSaP/view', '_blank')}f
+              type="button"
+              className="btn btn-warning"
+            >
+              Ver video tutorial
+            </button>
           </div>
         </div>
       </div>
