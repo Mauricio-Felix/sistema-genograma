@@ -1,18 +1,13 @@
 "use client";
 import Nav from "@/app/components/nav";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import ModalUser from "@/app/components/modal/modalUser";
 import { getFamiliares } from "@/app/action";
-import Offcanvas from "react-bootstrap/Offcanvas";
 import Modal from "@/app/components/modal";
 
 function BuscarFicha() {
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+ 
   const router = useRouter();
   const {
     register,
@@ -25,7 +20,6 @@ function BuscarFicha() {
 
   const [listaFamilia, setlistaFamilia] = useState([]);
   const [iduser, setId] = useState(0);
-  const [idJefeFamilia, setIdJefeFamilia] = useState(0);
   const onSubmit = handleSubmit(async (data) => {
     const result = await getFamiliares(watch("busqueda"), data.buscar);
 
@@ -41,16 +35,10 @@ function BuscarFicha() {
     setId(id);
   };
 
-  //IsUser(username, password);
+
 
   return (
     <>
-      {/* <Offcanvas show={show} onHide={handleClose} className="w-100">
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Familiares</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body></Offcanvas.Body>
-      </Offcanvas> */}
       <Nav></Nav>
       <Modal tittle="¿Desea editar información personal?">
         <div className="d-flex w-50 justify-content-around align-items-center">
@@ -74,19 +62,6 @@ function BuscarFicha() {
           </button>
         </div>
       </Modal>
-      {/* <ModalUser show={modalShow} tittle={`Confirme lo siguiente: `}>
-        <div className=" d-flex flex-column  align-items-center">
-          <button
-            onClick={() => {
-              setModalShow(false);
-              router.push(`/buscarFicha/editarFicha/${iduser}`);
-            }}
-            className="btn btn-primary m-2"
-          >
-            Editar Informacion Personal
-          </button>
-        </div>
-      </ModalUser> */}
       <div className="w-100 h-100 ">
         <div className="container-fluid p-4">
           <div className="card container">
@@ -136,7 +111,6 @@ function BuscarFicha() {
                     <div className="d-flex flex-row-reverse my-3">
                       <button
                         type="submit"
-                        //onClick={handlePushNuevaFicha}
                         className="btn btn-info mx-1"
                       >
                         <svg
@@ -242,25 +216,6 @@ function BuscarFicha() {
                                 <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
                               </svg>
                             </button>
-
-                            {/* <button
-                              type="button"
-                              onClick={() =>
-                                handleUserId(familia.csctbfamiliaid)
-                              }
-                              className="btn btn btn-secondary"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                fill="currentColor"
-                                className="bi bi-pencil-fill"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                              </svg>
-                            </button> */}
                           </div>
                         </td>
                       </tr>

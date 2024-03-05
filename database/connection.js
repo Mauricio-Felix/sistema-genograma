@@ -9,6 +9,11 @@ if (!conn) {
     host: 'localhost',
     port: '5432',
     database: 'cscdb_chambo_local',
+    // user: 'postgres',
+    // password: "Datatics.2024",
+    // host: '181.112.228.13',
+    // port: '5432',
+    // database: 'cscdb_chambo_gen',
   });
 }
 

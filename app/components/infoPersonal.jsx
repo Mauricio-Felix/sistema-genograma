@@ -105,7 +105,7 @@ export default function InfoPersonal(props) {
   return (
     <div className="container-fluid">
       <div className="d-flex justify-content-center">
-        <p className="fw-bold fs-4">Informacion Personal</p>
+        <p className="fw-bold fs-4">Información Personal</p>
       </div>
       <form onSubmit={onSubmit}>
         <div className="row mb-3">
@@ -227,7 +227,7 @@ export default function InfoPersonal(props) {
 
                 <div className="mx-1">
                   <label className="form-label">
-                    <h5>meses</h5>
+                    <h5>Meses</h5>
                   </label>
                   <input
                     {...register("meses", {})}
@@ -407,45 +407,7 @@ export default function InfoPersonal(props) {
               </>
             ) : null}
           </div>
-          {/* <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-            <div className="d-flex justify-content-between">
-              <div className="w-50" style={{ marginRight: "3px" }}>
-                <label className="form-label">
-                  <h5>Fecha de Union</h5>
-                </label>
-                <input
-                  {...register("fechaUnion", {
-                    required: {
-                      value: true,
-                      message: "Este campo es obligatorio.",
-                    },
-                    validate: (value) => {
-
-                      if (value == "") {
-                        console.log(value);
-                        return true;
-                      }
-
-                      const fechaNacimiento = new Date(value);
-                      const fechaActual = new Date();
-
-                      // Verificar si la fecha de nacimiento es en el futuro
-                      if (fechaNacimiento > fechaActual) {
-                        return false;
-                      }
-
-                      // Resto de la lógica de validación aquí (si es necesario)
-                      //console.log(value)
-                      return true; // Si la fecha de nacimiento es válida
-                    },
-                  })}
-                  type="date"
-                  className="form-control"
-                />
-              </div>
-            </div>
-          </div> */}
-
+          
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             {" "}
             <label className="form-label">

@@ -26,7 +26,6 @@ export default function InfoPersonal(props) {
       //refresh();
       const tabs = document.querySelectorAll(".nav-link");
       const content = document.querySelectorAll(".tab-pane");
-      const modal = document.getElementById("modalGuardar");
 
       var indexTab = 0;
       const activeTabIndex = tabs.forEach((tab, index) => {
@@ -109,14 +108,14 @@ export default function InfoPersonal(props) {
     <div className="container-fluid">
       <div className="d-flex justify-content-center">
         <p className="fw-bold fs-4">
-          Informacion Personal:{" "}
+          Información Personal:{" "}
           {datosFamiliar.nom_fam + " " + datosFamiliar.ape_fam}
         </p>
       </div>
       <form onSubmit={onSubmit}>
         <div className="row">
           <div className="col">
-            <label className="form-label">Nombres</label>
+            <label className="form-label"><h5>Nombres</h5></label>
 
             <input
               {...register("nombres", {
@@ -135,7 +134,7 @@ export default function InfoPersonal(props) {
           </div>
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             {" "}
-            <label className="form-label">Apellidos</label>
+            <label className="form-label"><h5>Apellidos</h5></label>
             <input
               {...register("apellidos", {
                 required: {
@@ -153,7 +152,7 @@ export default function InfoPersonal(props) {
           </div>
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             {" "}
-            <label className="form-label">Cedula</label>
+            <label className="form-label"><h5>Cédula</h5></label>
             <input
               {...register("cedula", {
                 required: {
@@ -173,7 +172,7 @@ export default function InfoPersonal(props) {
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
             <div className="d-flex justify-content-between">
               <div className="w-50" style={{ marginRight: "3px" }}>
-                <label className="form-label">Fecha de Nacimiento</label>
+                <label className="form-label"><h5>Fecha de Nacimiento</h5></label>
                 <input
                   {...register("fechaNacimiento", {
                     required: {
@@ -217,7 +216,7 @@ export default function InfoPersonal(props) {
               </div>
               <div className="d-flex w-50 justify-content-around align-items-end">
                 <div className="">
-                  <label className="form-label">Años</label>
+                  <label className="form-label"><h5>Años</h5></label>
                   <input
                     {...register("anios", {
                       value: datosFamiliar.anios,
@@ -229,7 +228,7 @@ export default function InfoPersonal(props) {
                 </div>
 
                 <div className="mx-1">
-                  <label className="form-label">meses</label>
+                  <label className="form-label"><h5>Meses</h5></label>
                   <input
                     {...register("meses", { value: datosFamiliar.meses })}
                     disabled
@@ -238,7 +237,7 @@ export default function InfoPersonal(props) {
                   />
                 </div>
                 <div className="">
-                  <label className="form-label">Dias</label>
+                  <label className="form-label"><h5>Días</h5></label>
                   <input
                     {...register("dias", { value: datosFamiliar.dias })}
                     disabled
@@ -256,7 +255,7 @@ export default function InfoPersonal(props) {
 
         <div className="row mt-2">
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-            <label className="form-label">Género</label>
+            <label className="form-label"><h5>Género</h5></label>
             <select
               {...register("genero", {
                 required: {
@@ -282,7 +281,7 @@ export default function InfoPersonal(props) {
             {watch("genero") == "FEMENINO" ? (
               <>
                 <label id="embarazada" className="form-label">
-                  Esta Embarazada
+                  <h5>Está embarazada</h5>
                 </label>
                 <div id="embarazada">
                   <div className="form-check form-check-inline">
@@ -322,7 +321,7 @@ export default function InfoPersonal(props) {
           </div>
 
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-            <label className="form-label">Parentesto</label>
+            <label className="form-label"><h5>Parentesco</h5></label>
             <select
               {...register("parentesco", {
                 required: {
@@ -336,7 +335,7 @@ export default function InfoPersonal(props) {
               className="form-select"
               aria-label="Default select example"
             >
-              <option value="">Seleccione la opcion</option>
+              <option value="">Seleccione la opción</option>
               {parentescos.map((parentesco) => (
                 <option
                   key={parentesco.csctbparentescoid}
@@ -352,7 +351,7 @@ export default function InfoPersonal(props) {
           </div>
 
           <div className="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-            <label className="form-label">Estado Civil</label>
+            <label className="form-label"><h5>Estado Civil</h5></label>
             <select
               {...register("estadoCivil", {
                 required: {

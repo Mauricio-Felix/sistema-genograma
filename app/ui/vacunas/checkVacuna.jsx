@@ -1,6 +1,5 @@
 "use client";
 import {
-  guardarEnfermedadVacunas,
   updateEnfermdad,
   updateVacunas,
 } from "@/app/action";
@@ -174,7 +173,7 @@ export default function CheckVacuna({
         </div>
       </ModalGenerico>
       <div className="d-flex justify-content-center">
-        <p className="fw-bold fs-4">Vacunas: {data.nombre}</p>
+        <p className="fw-bold fs-4">Vacunas y Enfermedades: {data.nombre}</p>
       </div>
       <div className="row">
         <div className="col-12">

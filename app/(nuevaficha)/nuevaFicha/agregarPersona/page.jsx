@@ -39,7 +39,7 @@ export default async function AgregarPersona({ searchParams }) {
               aria-controls="pills-profile"
               aria-selected="false"
             >
-              Vacunas
+              Enfermedades
             </button>
           </li>
 

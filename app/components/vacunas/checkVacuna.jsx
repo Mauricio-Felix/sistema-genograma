@@ -113,7 +113,7 @@ export default function CheckVacuna({ enfermedades, vacunas }) {
             onClick={() => setModalShow(false)}
             className="btn btn-danger"
           >
-            Cerrar
+            Cancelar
           </button>
           <button
             onClick={() => {
@@ -122,12 +122,12 @@ export default function CheckVacuna({ enfermedades, vacunas }) {
             }}
             className="btn btn-primary mx-2"
           >
-            Continuar
+            Agregar
           </button>
         </div>
       </ModalGenerico>
       <div className="d-flex justify-content-center">
-        <p className="fw-bold fs-4">Vacunas</p>
+        <p className="fw-bold fs-4"> Vacunas y Enfermedades</p>
       </div>
       <div className="row mb-3">
         <div className="col-12">

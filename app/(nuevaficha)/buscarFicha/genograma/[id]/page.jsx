@@ -4,73 +4,62 @@ import { useEffect, useState } from "react";
 import {
   getFamiliares,
   getDiagnosticoFamiliar,
-  updateTipoFamilia,
-  updateDiagnosticoFamiliar
+  updateDiagnosticoFamiliar,
 } from "@/app/action";
 import { useForm } from "react-hook-form";
 import Explain from "@/app/components/genogramaFamiliar/Explain";
-//import Form from "react-bootstrap/Form";
 import { useRouter } from "next/navigation";
-import { Navbar } from "react-bootstrap";
 
 /*
-
-useEffect 
-para ejecutar una lógica de carga inicial cuando el componente
-se monta por primera vez o cuando params.id cambia. En este caso,
-las funciones getFamiliares y getTipoFamilia se llaman para obtener
-datos de familiares y tipos de familia correspondientes al params.id proporcionado.
-
-
-Formulario y actualización de datos:
-Utiliza el hook useForm para manejar los datos de un formulario y realizar actualizaciones
-en la base de datos cuando estos datos cambian. También hay un efecto secundario que se
-activa cuando los valores del formulario cambian, lo que ejecuta la función updateTipoFamilia
-para actualizar los datos del tipo de familia en la base de datos.
-
-
-                                IMPORTANTE
-
-GenogramaPage se encarga de mostrar y actualizar datos relacionados con genogramas
-familiares en la aplicación, lo que incluye obtener datos del servidor,
-manejar formularios, y permitir interacciones con el usuario.
+GenogramaPage se encarga de mostrar y actualizar datos relacionados con genogramas familiares en la 
+aplicación, lo que incluye obtener datos del servidor, manejar formularios, y permitir interacciones 
+con el usuario.
 */
 
 export default function GenogramaPage({ params, searchParams }) {
   var i = 0;
   const [listaFamilia, setlistaFamilia] = useState([]);
-  const [listaTipoFamilia, setTipolistaTipoFamilia] = useState(null);
+  const [diagnosticoFamiliar, setDiagnosticoFamiliar] = useState(null);
   const [firstLoad, setFirstLoad] = useState(true);
 
   const {
     register,
-    handleSubmit,
     watch,
     setValue,
-    getValues,
     formState: { errors },
   } = useForm();
 
   const router = useRouter();
+  /*
+    Este hook useEffect se utiliza para obtener información sobre la familia y su diagnóstico 
+    familiar cuando el componente se monta por primera vez o cuando el id de la familia cambia. 
+    Los resultados de estas llamadas se utilizan para actualizar los estados locales listaFamilia y 
+    diagnosticoFamiliar, respectivamente.
+  */
   useEffect(() => {
     const getFamilia = async () => {
       return await getFamiliares(1, params.id);
     };
-    const getTipoFamiliaC = async () => {
+
+    const getDiagnostico = async () => {
       return await getDiagnosticoFamiliar(params.id);
     };
-   
-    getTipoFamiliaC().then((data) => {
-      setTipolistaTipoFamilia(data[0]);
+
+    getDiagnostico().then((data) => {
+      setDiagnosticoFamiliar(data[0]);
     });
+
     getFamilia().then((data) => {
       setlistaFamilia(data);
     });
   }, [params.id]);
 
+  /*
+    formValues es un objeto que contiene los valores actuales de los campos del formulario, 
+    y estos valores se actualizan dinámicamente cuando los campos del formulario cambian.
+  */
   const formValues = {
     tipoFamilia: watch("tipoFamilia"),
-    hijoEdadAdulta: watch("hijoEdadAdulta"),
     cicloVital: watch("cicloVital"),
     primerHijo: watch("primerHijo"),
     hijoEdadPreescolar: watch("hijoEdadPreescolar"),
@@ -80,15 +69,17 @@ export default function GenogramaPage({ params, searchParams }) {
     apgarFamiliar: watch("apgarFamiliar"),
   };
 
-  // ...
-
+  /*
+    Este hook useEffect se utiliza para actualizar el diagnóstico familiar utilizando los valores actuales
+    del formulario cuando se produce un cambio en los valores de formValues, firstLoad o params.id. 
+    La actualización del diagnóstico solo se realiza si no es la primera carga (firstLoad es false).
+  */
   useEffect(() => {
     i++;
-    const updateTipoFamaliaUse = async () => {
+    const updateDiagnosticoFamiliarUse = async () => {
       await updateDiagnosticoFamiliar(
         {
           tipoFamilia: watch("tipoFamilia"),
-          hijoEdadAdulta: watch("hijoEdadAdulta"),
           cicloVital: watch("cicloVital"),
           primerHijo: watch("primerHijo"),
           hijoEdadPreescolar: watch("hijoEdadPreescolar"),
@@ -103,25 +94,13 @@ export default function GenogramaPage({ params, searchParams }) {
     };
     // Lógica que solo debe ejecutarse en la primera carga
     if (!firstLoad) {
-      // Lógica que solo debe ejecutarse en la primera carga
-      //console.log("ejecutandose", params.id);
-      updateTipoFamaliaUse();
+      updateDiagnosticoFamiliarUse();
     }
-    //console.log("ya nooo", i);
-    //if (i == 2) {
-    //console.log("ya siiiii", i);
-    setFirstLoad(false);
-    //}
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setFirstLoad(false);
   }, [formValues, firstLoad, params.id]);
 
-  const onChanges = (e) => {
-    if (e.target.checked) {
-      setValue("cicloVital", null);
-    }
-  };
-
+  // Para poner en false el segundo panel de ciclo vital
   const OnchangesCicloVital = () => {
     setValue("primerHijo", false);
     setValue("hijoEdadPreescolar", false);
@@ -130,7 +109,11 @@ export default function GenogramaPage({ params, searchParams }) {
     setValue("hijoEdadAdulta", false);
   };
 
-  return listaFamilia.length > 0 && listaTipoFamilia != null ? (
+  /*
+    Interfaz de usuario: contiene el componente MostrarGenograma, Explain (simbolos), 
+    textArea (Observaciones) y 4 paneles de preguntas de seleccion (Diagnostico Familiar)
+  */
+  return listaFamilia.length > 0 && diagnosticoFamiliar != null ? (
     <>
       <nav className="navbar navbar-light bg-light">
         <div className="container-fluid">
@@ -156,9 +139,6 @@ export default function GenogramaPage({ params, searchParams }) {
         </div>
       </nav>
       <div className="row container-fluid bg-body-tertiary">
-        {/* <div className="col-sm-12 col-md-12">
-          <h5 className="text-center">FAMILIA: </h5>
-        </div> */}
         <div className="col-sm-12 col-md-9">
           <MostrarGenograma idFamilia={params.id} familiares={listaFamilia} />
         </div>
@@ -180,7 +160,7 @@ export default function GenogramaPage({ params, searchParams }) {
               required: {
                 value: false,
               },
-              value: listaTipoFamilia.observacion,
+              value: diagnosticoFamiliar.observacion,
               validate: (value) => value !== "",
             })}
           ></textarea>
@@ -197,7 +177,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"Familia extensa"}
                 defaultChecked={
-                  listaTipoFamilia.tipo_familia === "Familia extensa"
+                  diagnosticoFamiliar.tipo_familia === "Familia extensa"
                 }
               />
               <label className="form-check-label" for="flexRadioDefault1">
@@ -211,7 +191,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"Familia nuclear"}
                 defaultChecked={
-                  listaTipoFamilia.tipo_familia === "Familia nuclear"
+                  diagnosticoFamiliar.tipo_familia === "Familia nuclear"
                 }
               />
               <label className="form-check-label" for="flexRadioDefault1">
@@ -225,7 +205,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"Personas sin familia"}
                 defaultChecked={
-                  listaTipoFamilia.tipo_familia === "Personas sin familia"
+                  diagnosticoFamiliar.tipo_familia === "Personas sin familia"
                 }
               />
               <label className="form-check-label" for="flexRadioDefault1">
@@ -239,7 +219,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"Equivalentes familiares"}
                 defaultChecked={
-                  listaTipoFamilia.tipo_familia === "Equivalentes familiares"
+                  diagnosticoFamiliar.tipo_familia === "Equivalentes familiares"
                 }
               />
               <label className="form-check-label" for="flexRadioDefault1">
@@ -248,12 +228,12 @@ export default function GenogramaPage({ params, searchParams }) {
             </div>
             <div className="form-check">
               <input
-                {...register("tipoFamilia", { onChange: onChanges })}
+                {...register("tipoFamilia", {})}
                 className="form-check-input"
                 type="radio"
                 value={"Familia Ampliada"}
                 defaultChecked={
-                  listaTipoFamilia.tipo_familia === "Familia Ampliada"
+                  diagnosticoFamiliar.tipo_familia === "Familia Ampliada"
                 }
               />
               <label className="form-check-label" for="flexRadioDefault1">
@@ -265,21 +245,16 @@ export default function GenogramaPage({ params, searchParams }) {
         <div
           style={
             !(
-              (
-                watch("tipoFamilia") == "Personas sin familia" ||
-                watch("tipoFamilia") == "Familia extensa" ||
-                watch("tipoFamilia") == "Familia nuclear" ||
-                watch("tipoFamilia") == "Equivalentes familiares" ||
-                watch("tipoFamilia") == "Familia Ampliada" ||
-                listaTipoFamilia.tipo_familia == "Personas sin familia" ||
-                listaTipoFamilia.tipo_familia == "Familia extensa" ||
-                listaTipoFamilia.tipo_familia == "Familia nuclear" ||
-                listaTipoFamilia.tipo_familia == "Equivalentes familiares" ||
-                listaTipoFamilia.tipo_familia == "Familia Ampliada"
-              )
-
-              // watch("tipoFamilia") == "Personas sin familia" ||
-              // listaTipoFamilia.tipo_familia == "Personas sin familia"
+              watch("tipoFamilia") == "Personas sin familia" ||
+              watch("tipoFamilia") == "Familia extensa" ||
+              watch("tipoFamilia") == "Familia nuclear" ||
+              watch("tipoFamilia") == "Equivalentes familiares" ||
+              watch("tipoFamilia") == "Familia Ampliada" ||
+              diagnosticoFamiliar.tipo_familia == "Personas sin familia" ||
+              diagnosticoFamiliar.tipo_familia == "Familia extensa" ||
+              diagnosticoFamiliar.tipo_familia == "Familia nuclear" ||
+              diagnosticoFamiliar.tipo_familia == "Equivalentes familiares" ||
+              diagnosticoFamiliar.tipo_familia == "Familia Ampliada"
             )
               ? { pointerEvents: "none", opacity: "0.4" }
               : { pointerEvents: "auto", opacity: "1" }
@@ -297,7 +272,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"FAMILIA EN FORMACIÓN"}
                 defaultChecked={
-                  listaTipoFamilia.ciclo_vital === "FAMILIA EN FORMACIÓN"
+                  diagnosticoFamiliar.ciclo_vital === "FAMILIA EN FORMACIÓN"
                 }
               />
               <label
@@ -314,7 +289,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"FAMILIA EN EXPANSIÓN"}
                 defaultChecked={
-                  listaTipoFamilia.ciclo_vital === "FAMILIA EN EXPANSIÓN"
+                  diagnosticoFamiliar.ciclo_vital === "FAMILIA EN EXPANSIÓN"
                 }
               />
               <label
@@ -331,7 +306,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"FAMILIA EN DISPERSIÓN"}
                 defaultChecked={
-                  listaTipoFamilia.ciclo_vital === "FAMILIA EN DISPERSIÓN"
+                  diagnosticoFamiliar.ciclo_vital === "FAMILIA EN DISPERSIÓN"
                 }
               />
               <label
@@ -352,7 +327,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"FAMILIA EN CONTRACCIÓN"}
                 defaultChecked={
-                  listaTipoFamilia.ciclo_vital === "FAMILIA EN CONTRACCIÓN"
+                  diagnosticoFamiliar.ciclo_vital === "FAMILIA EN CONTRACCIÓN"
                 }
               />
               <label
@@ -369,7 +344,7 @@ export default function GenogramaPage({ params, searchParams }) {
           style={
             !(
               watch("cicloVital") == "FAMILIA EN EXPANSIÓN" ||
-              listaTipoFamilia.ciclo_vital == "FAMILIA EN EXPANSIÓN"
+              diagnosticoFamiliar.ciclo_vital == "FAMILIA EN EXPANSIÓN"
             )
               ? { pointerEvents: "none", opacity: "0.4" }
               : { pointerEvents: "auto", opacity: "1" }
@@ -383,7 +358,7 @@ export default function GenogramaPage({ params, searchParams }) {
             <div className="form-check">
               <input
                 {...register("primerHijo", {
-                  value: listaTipoFamilia.primer_hijo,
+                  value: diagnosticoFamiliar.primer_hijo,
                 })}
                 className="form-check-input"
                 type="checkbox"
@@ -396,7 +371,7 @@ export default function GenogramaPage({ params, searchParams }) {
             <div className="form-check">
               <input
                 {...register("hijoEdadPreescolar", {
-                  value: listaTipoFamilia.hijo_edad_preescolar,
+                  value: diagnosticoFamiliar.hijo_edad_preescolar,
                 })}
                 className="form-check-input"
                 type="checkbox"
@@ -409,7 +384,7 @@ export default function GenogramaPage({ params, searchParams }) {
             <div className="form-check">
               <input
                 {...register("hijoEdadEscolar", {
-                  value: listaTipoFamilia.hijo_edad_escolar,
+                  value: diagnosticoFamiliar.hijo_edad_escolar,
                 })}
                 className="form-check-input"
                 type="checkbox"
@@ -423,7 +398,7 @@ export default function GenogramaPage({ params, searchParams }) {
             <div className="form-check">
               <input
                 {...register("hijoEdadAdolescente", {
-                  value: listaTipoFamilia.hijo_edad_adolescente,
+                  value: diagnosticoFamiliar.hijo_edad_adolescente,
                 })}
                 className="form-check-input"
                 type="checkbox"
@@ -436,7 +411,7 @@ export default function GenogramaPage({ params, searchParams }) {
             <div className="form-check">
               <input
                 {...register("hijoEdadAdulta", {
-                  value: listaTipoFamilia.hijo_edad_adulta,
+                  value: diagnosticoFamiliar.hijo_edad_adulta,
                 })}
                 className="form-check-input"
                 type="checkbox"
@@ -456,10 +431,10 @@ export default function GenogramaPage({ params, searchParams }) {
               watch("cicloVital") == "FAMILIA EN EXPANSIÓN" ||
               watch("cicloVital") == "FAMILIA EN DISPERSIÓN" ||
               watch("cicloVital") == "FAMILIA EN CONTRACCIÓN" ||
-              listaTipoFamilia.ciclo_vital == "FAMILIA EN FORMACIÓN" ||
-              listaTipoFamilia.ciclo_vital == "FAMILIA EN EXPANSIÓN" ||
-              listaTipoFamilia.ciclo_vital == "FAMILIA EN DISPERSIÓN" ||
-              listaTipoFamilia.ciclo_vital == "FAMILIA EN CONTRACCIÓN"
+              diagnosticoFamiliar.ciclo_vital == "FAMILIA EN FORMACIÓN" ||
+              diagnosticoFamiliar.ciclo_vital == "FAMILIA EN EXPANSIÓN" ||
+              diagnosticoFamiliar.ciclo_vital == "FAMILIA EN DISPERSIÓN" ||
+              diagnosticoFamiliar.ciclo_vital == "FAMILIA EN CONTRACCIÓN"
             )
               ? { pointerEvents: "none", opacity: "0.4" }
               : { pointerEvents: "auto", opacity: "1" }
@@ -477,7 +452,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"Familia funcional"}
                 defaultChecked={
-                  listaTipoFamilia.apgar_familiar === "Familia funcional"
+                  diagnosticoFamiliar.apgar_familiar === "Familia funcional"
                 }
               />
               <label className="form-check-label" for="flexRadioDefault1">
@@ -491,7 +466,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"Familia con disfunción leve"}
                 defaultChecked={
-                  listaTipoFamilia.apgar_familiar ===
+                  diagnosticoFamiliar.apgar_familiar ===
                   "Familia con disfunción leve"
                 }
               />
@@ -506,7 +481,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"Familia con disfunción moderada"}
                 defaultChecked={
-                  listaTipoFamilia.apgar_familiar ===
+                  diagnosticoFamiliar.apgar_familiar ===
                   "Familia con disfunción moderada"
                 }
               />
@@ -521,7 +496,7 @@ export default function GenogramaPage({ params, searchParams }) {
                 type="radio"
                 value={"Familia con disfunción severa"}
                 defaultChecked={
-                  listaTipoFamilia.apgar_familiar ===
+                  diagnosticoFamiliar.apgar_familiar ===
                   "Familia con disfunción severa"
                 }
               />

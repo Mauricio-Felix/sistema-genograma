@@ -1,4 +1,3 @@
-// import '../App.css';
 "use client";
 import React, { Component, useState } from "react";
 
@@ -9,37 +8,38 @@ import Toast from "react-bootstrap/Toast";
 
 var genoData;
 var diagram;
-function initDiagram() {
-  const $ = go.GraphObject.make;
-  // set your license key here before creating the diagram: go.Diagram.licenseKey = "...";
-  go.Diagram.licenseKey = "adsfewfwaefasdfdsfs";
-  diagram = $(go.Diagram, {
-    initialDocumentSpot: go.Spot.Bottom,
-    initialViewportSpot: go.Spot.Bottom,
-    "undoManager.isEnabled": true,// must be set to allow for model change listening
-    "grid.visible": true,
-    initialAutoScale: go.Diagram.Uniform,
-    "clickCreatingTool.archetypeNodeData": {
-      text: "new node",
-      color: "lightblue",
-    },
-    model: $(go.GraphLinksModel, {
-      linkKeyProperty: "key", // IMPORTANT! must be defined for merges and data sync when using GraphLinksModel
-    }),
 
+//? Funcion principal: configuracion inicial del diagrama, se establecen los simbolos del genograma y
+//? Los enlaces entre los nodos (simbolos) y los tipos de uniones (Estado civil)
+function initDiagram() {
+
+  const $ = go.GraphObject.make; // Función de GoJS para crear elementos gráficos en el diagrama.
+  go.Diagram.licenseKey = "adsfewfwaefasdfdsfs"; // Clave de licencia (solo es ejemplo)
+  // Prepara el area de trabajo del diagrama
+  diagram = $(go.Diagram, {
+    initialDocumentSpot: go.Spot.Bottom, // Establece los puntos de referencia inicial para el documento
+    initialViewportSpot: go.Spot.Bottom, // Establece la vista inicial del diagrama
+    "undoManager.isEnabled": true, // Deshacer y Rehacer: activado
+    "grid.visible": true, // Mostar el fondo de cuadriculas: activado
+
+    model: $(go.GraphLinksModel, {
+      linkKeyProperty: "key", 
+    }),
+    // Adorno que se muestra alrededor de un nodo seleccionado
     nodeSelectionAdornmentTemplate: $(
       go.Adornment,
       "Auto",
-      { layerName: "Grid" }, // the predefined layer that is behind everything else
+      { layerName: "Grid" }, 
       $(go.Shape, "Circle", { fill: "#c1cee3", stroke: null }),
       $(go.Placeholder, { margin: 2 })
     ),
-    // use a custom layout, defined below
+    // Diseño del diagrama
     layout: $(GenogramLayout, {
       direction: 90,
-      layerSpacing: 30,
+      layerSpacing: 10,
       columnSpacing: 10,
     }),
+
   });
 
   function attrFill(a) {
@@ -84,15 +84,14 @@ function initDiagram() {
   var blsq = go.Geometry.parse("F M1 20 l19 0 0 19 -19 0z");
   var slash = go.Geometry.parse(
     "F M38 0 L40 0 40 2 2 40 0 40 0 38z" + "F M40 38 L40 40 38 40 0 2 0 0 2 0z"
-  ); //aqui
+  ); 
   var plus = go.Geometry.parse(
     "F M0 0 L80 0 B-90 90 80 20 20 20 L100 100 20 100 B90 90 20 80 20 20z"
   );
   var flecha = go.Geometry.parse(
     "M8 1 a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
-    // "M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"
-    // "M8 1a.5.5 0 0 1 .5.5v5.5l1.146-1.146a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 7.5V1.5A.5.5 0 0 1 8 1z"
   );
+
   function maleGeometry(a) {
     switch (a) {
       case "A":
@@ -131,6 +130,7 @@ function initDiagram() {
   var trarc = go.Geometry.parse("F M20 20 B 270 90 20 20 19 19 z");
   var brarc = go.Geometry.parse("F M20 20 B 0 90 20 20 19 19 z");
   var blarc = go.Geometry.parse("F M20 20 B 90 90 20 20 19 19 z");
+
   function femaleGeometry(a) {
     switch (a) {
       case "A":
@@ -166,6 +166,7 @@ function initDiagram() {
     }
   }
 
+  // Función para mostrar y ocultar flecha
   function colorApuntador(a) {
     switch (a) {
       case "AP":
@@ -175,60 +176,21 @@ function initDiagram() {
     }
   }
 
+  //? PLANTILLA DE SIMBOLOS
 
-
-  /*
-  A continuacion se presentan las formas de cada uno de los nodos
-  dependiendo del tipo de familiar
-
-
-diagram.nodeTemplateMap.add("M", ...):
-
-Define una plantilla de nodo con la clave "M" y la configuración especificada.
-go.Node, "Vertical", {...}:
-
-Define un nodo en posición vertical.
-locationSpot: go.Spot.Center, locationObjectName: "ICON", selectionObjectName: "ICON":
-
-Especifica la ubicación y los objetos de selección para el nodo.
-$(go.Panel, "Spot", {...}, new go.Binding("itemArray", "a")):
-
-Define un panel de tipo "Spot" con un conjunto de elementos especificados por el arreglo "a".
-$(go.Panel, "Auto", {...}):
-
-Define un panel automático para el icono del nodo.
-$(go.Shape, "Square", {...}, new go.Binding("fill", "a", ...)):
-
-Define un icono cuadrado con ciertas propiedades y colores basados en los datos del arreglo "a".
-$(go.Panel, {...}, new go.Binding("itemArray", "a")):
-
-Define un panel con un conjunto de elementos definidos por el arreglo "a".
-$(go.TextBlock, {...}, new go.Binding("text", "anios")):
-
-Define un bloque de texto con ciertas propiedades y enlaces de datos.
-$(go.TextBlock, {...}, new go.Binding("text", "n")):
-
-Define otro bloque de texto con propiedades similares, pero con el texto vinculado a los datos "n".
-$(go.TextBlock, {...}, new go.Binding("text", "codigo")):
-
-Define un tercer bloque de texto con propiedades similares, pero vinculado a los datos "codigo".
-
-
-  */
-
-
-  //hombre
+  // Plantilla: Hombre
   diagram.nodeTemplateMap.add(
-    "M",
+    "M", //Male
     $(
       go.Node,
-      "Vertical",
+      "Vertical", // Diseño vertical: los elementos se ubican uno encima del otro
       {
+        // Ubicación y selección del nodo en el diagrama
         locationSpot: go.Spot.Center,
         locationObjectName: "ICON",
         selectionObjectName: "ICON",
       },
-
+      // Panel para el simbolo de informante (Flecha)
       $(
         go.Panel,
         "Spot",
@@ -244,7 +206,6 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
                 margin: 2,
                 angle: -25,
               },
-
               new go.Binding("stroke", "", colorApuntador),
               new go.Binding("fill", "", colorApuntador),
               new go.Binding("geometry", "", (e) => {
@@ -260,7 +221,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
         },
         new go.Binding("itemArray", "a")
       ),
-
+      // Panel para el símbolo de hombre (Cuadrado)
       $(
         go.Panel,
         "Auto",
@@ -284,7 +245,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             }
           })
         ),
-
+        // Panel para el simbolo de fallecimiento (X)
         $(
           go.Panel,
           {
@@ -301,7 +262,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           },
           new go.Binding("itemArray", "a")
         ),
-
+        // Texto para la edad 
         $(
           go.TextBlock,
           {
@@ -314,13 +275,13 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("text", "anios")
         )
       ),
-      
+      // Texto para el nombre
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
         new go.Binding("text", "n")
       ),
-
+      // Texto para el código de la enfermedad
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(100, NaN), editable: false },
@@ -328,18 +289,20 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
       )
     )
   );
-  //mujer
+
+  // Plantilla: Mujer
   diagram.nodeTemplateMap.add(
-    "F", // female
+    "F", // Female
     $(
       go.Node,
-      "Vertical",
+      "Vertical", // Diseño vertical: los elementos se ubican uno encima del otro
       {
+        // Ubicación y selección del nodo en el diagrama
         locationSpot: go.Spot.Center,
         locationObjectName: "ICON",
         selectionObjectName: "ICON",
       },
-
+      // Panel para el simbolo de informante (Flecha)
       $(
         go.Panel,
         "Spot",
@@ -355,7 +318,6 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
                 margin: 2,
                 angle: -25,
               },
-
               new go.Binding("stroke", "", colorApuntador),
               new go.Binding("fill", "", colorApuntador),
               new go.Binding("geometry", "", (e) => {
@@ -371,7 +333,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
         },
         new go.Binding("itemArray", "a")
       ),
-
+      // Panel para el símbolo de mujer (Circulo)
       $(
         go.Panel,
         "Auto",
@@ -388,7 +350,6 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             portId: "",
           },
           new go.Binding("fill", "a", (e) => {
-            //console.log(e);
             if (e.includes("NF")) {
               return "#BB8FCE";
             } else {
@@ -396,10 +357,10 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             }
           })
         ),
+        // Panel para el simbolo de fallecimiento (X)
         $(
           go.Panel,
           {
-            // for each attribute show a Shape at a particular place in the overall circle
             itemTemplate: $(
               go.Panel,
               $(
@@ -413,6 +374,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           },
           new go.Binding("itemArray", "a")
         ),
+        // Texto para la edad
         $(
           go.TextBlock,
           {
@@ -425,13 +387,13 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("text", "anios")
         )
       ),
-
+      // Texto para el nombre
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
         new go.Binding("text", "n")
       ),
-      
+      // Texto para el código de enfermedad
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(100, NaN), editable: false },
@@ -440,49 +402,19 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
     )
   );
 
-  //Embarazada
+  // Plantilla: Embarazada (Solo símbolo)
   diagram.nodeTemplateMap.add(
-    "embarazada", // Miscarriage
+    "embarazada",
     $(
       go.Node,
-      "Vertical",
+      "Vertical", // Diseño vertical: los elementos se ubican uno encima del otro
       {
+        // Ubicación y selección del nodo en el diagrama
         locationSpot: go.Spot.Center,
         locationObjectName: "ICON",
         selectionObjectName: "ICON",
       },
-      $(
-        go.Panel,
-        "Spot",
-        {
-          itemTemplate: $(
-            go.Panel,
-            $(
-              go.Shape,
-              {
-                strokeWidth: 1,
-                height: 40,
-                width: 30,
-                margin: 2,
-                angle: 25,
-              },
-              new go.Binding("stroke", "", colorApuntador),
-              new go.Binding("fill", "", colorApuntador),
-              new go.Binding("geometry", "", (e) => {
-                if (e == "AP") {
-                  return flecha;
-                } else {
-                  return tlarc;
-                }
-              })
-            ),
-
-            { alignment: new go.Spot(0, 1, 50, 0) }
-          ),
-        },
-        new go.Binding("itemArray", "a")
-      ),
-
+      // Panel para simbolo de embarazo
       $(
         go.Panel,
         "Auto",
@@ -495,61 +427,23 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           stroke: "#a1a1a1",
           portId: "",
         }),
-        $(
-          go.Panel,
-          {
-            // for each attribute show a Shape at a particular place in the overall circle
-            itemTemplate: $(
-              go.Panel,
-              $(
-                go.Shape,
-                { stroke: null, strokeWidth: 0 },
-                new go.Binding("fill", "", attrFill),
-                new go.Binding("geometry", "", maleGeometry)
-              )
-            ),
-            margin: 1,
-          },
-          new go.Binding("itemArray", "a")
-        ),
-
-        $(
-          go.TextBlock,
-          {
-            textAlign: "center",
-            verticalAlignment: go.Spot.Center,
-            maxSize: new go.Size(80, NaN),
-            font: "16px serif",
-            editable: true,
-          },
-          new go.Binding("text", "anios")
-        )
       ),
-
-      $(
-        go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: true },
-        new go.Binding("text", "n")
-      ),
-      $(
-        go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: true },
-        new go.Binding("text", "codigo")
-      )
     )
   );
 
-  //hijastro
+  // Plantilla: Hijastro
   diagram.nodeTemplateMap.add(
-    "hijastro", // Miscarriage
+    "hijastro",
     $(
       go.Node,
-      "Vertical",
+      "Vertical", // Diseño vertical: los elementos se ubican uno encima del otro
       {
+        // Ubicación y selección del nodo en el diagrama
         locationSpot: go.Spot.Center,
         locationObjectName: "ICON",
         selectionObjectName: "ICON",
       },
+      // Panel para el simbolo de informante (Flecha)
       $(
         go.Panel,
         "Spot",
@@ -581,7 +475,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
         },
         new go.Binding("itemArray", "a")
       ),
-
+      // Panel para el símbolo de hijastro [Cuadrado]
       $(
         go.Panel,
         "Auto",
@@ -594,7 +488,6 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             height: 50,
             strokeWidth: 1.5,
             fill: "white",
-            //background: "white",
             portId: "",
             stroke: "#636363",
             geometryString: `M228.79999 154.8 h106 v78 h-106 Z 
@@ -607,7 +500,6 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           },
 
           new go.Binding("background", "a", (e) => {
-            //console.log(e.includes("NF"));
             if (e.includes("NF")) {
               return "#BB8FCE";
             } else {
@@ -615,8 +507,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             }
           })
         ),
-        //{background},
-
+        // Panel para el simbolo de fallecimiento (X)
         $(
           go.Panel,
           {
@@ -632,7 +523,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           },
           new go.Binding("itemArray", "a")
         ),
-
+        // Texto para la edad
         $(
           go.TextBlock,
           {
@@ -645,12 +536,13 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("text", "anios")
         )
       ),
-      
+      // Texto para el nombre
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
         new go.Binding("text", "n")
       ),
+      // Texto para el código de enfermedad
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(100, NaN), editable: false },
@@ -659,18 +551,19 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
     )
   );
 
-  //HIjastra
+  // Plantilla: Hijastra
   diagram.nodeTemplateMap.add(
-    "hijastra", // Miscarriage
+    "hijastra",
     $(
       go.Node,
-      "Vertical",
+      "Vertical", // Diseño vertical: los elementos se ubican uno encima del otro
       {
+        // Ubicación y selección del nodo en el diagrama
         locationSpot: go.Spot.Center,
         locationObjectName: "ICON",
         selectionObjectName: "ICON",
       },
-
+      // Panel para el simbolo de informante (flecha)
       $(
         go.Panel,
         "Spot",
@@ -702,7 +595,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
         },
         new go.Binding("itemArray", "a")
       ),
-      
+      // Panel para el símbolo de hijastra [circulo]
       $(
         go.Panel,
         "Auto",
@@ -715,7 +608,6 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             height: 50,
             strokeWidth: 1.5,
             fill: "white",
-            //background: "white",
             portId: "",
             stroke: "#636363",
 
@@ -728,7 +620,6 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             M280 146.77868a48.83721 48.83721 0 1 0 0 97.67442a48.83721 48.83721 0 1 0 0 -97.67442`,
           },
           new go.Binding("background", "a", (e) => {
-            //console.log(e);
             if (e.includes("NF")) {
               return "#BB8FCE";
             } else {
@@ -736,7 +627,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
             }
           })
         ),
-
+        // Panel para el simbolo de fallecimiento (X)
         $(
           go.Panel,
           {
@@ -752,7 +643,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           },
           new go.Binding("itemArray", "a")
         ),
-
+        // Texto para la edad
         $(
           go.TextBlock,
           {
@@ -765,12 +656,13 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           new go.Binding("text", "anios")
         )
       ),
-
+      // Texto para el nombre
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(80, NaN), editable: false },
         new go.Binding("text", "n")
       ),
+      // Texto para el código de enfermedad
       $(
         go.TextBlock,
         { textAlign: "center", maxSize: new go.Size(100, NaN), editable: false },
@@ -779,255 +671,19 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
     )
   );
 
-  // padre soltero
+  //Plantilla: Aborto Espontáneo
   diagram.nodeTemplateMap.add(
-    "padreSoltero", // Miscarriage
+    "ESPONTÁNEO",
     $(
       go.Node,
-      "Vertical",
+      "Vertical", // Diseño vertical: los elementos se ubican uno encima del otro
       {
+        // Ubicación y selección del nodo en el diagrama
         locationSpot: go.Spot.Center,
         locationObjectName: "ICON",
         selectionObjectName: "ICON",
       },
-      $(
-        go.Panel,
-        "Spot",
-        {
-          itemTemplate: $(
-            go.Panel,
-            $(
-              go.Shape,
-              {
-                strokeWidth: 1,
-                height: 40,
-                width: 30,
-                margin: 2,
-                angle: -25,
-              },
-              new go.Binding("stroke", "", colorApuntador),
-              new go.Binding("fill", "", colorApuntador),
-              new go.Binding("geometry", "", (e) => {
-                if (e == "AP") {
-                  return flecha;
-                } else {
-                  return tlarc;
-                }
-              })
-            ),
-            { alignment: new go.Spot(0, 1, -40, 0) }
-          ),
-        },
-        new go.Binding("itemArray", "a")
-      ),
-      // new go.Binding("itemArray", "a"),
-
-      $(
-        go.Panel,
-        "Auto",
-        { name: "ICON" },
-
-        $(
-          go.Shape,
-          {
-            width: 50,
-            height: 50,
-            strokeWidth: 1.5,
-            fill: "white",
-
-            stroke: "#a1a1a1",
-
-            geometryString: `M213.64101 146.38252
-          l64.61785 -71.9508
-          l64.61785 71.9508
-          l-64.61785 71.9508
-          l-64.61785 -71.9508
-          M184.57216 59.57192
-          h186.42883
-          v171.42881
-          h-186.42883
-          v-171.42881`,
-          },
-          new go.Binding("fill", "a", (e) => {
-            console.log(e);
-            if (e.includes("S")) {
-              return "#0B9BFE";
-            } else {
-              return "white";
-            }
-          })
-        ),
-        $(
-          go.Panel,
-          {
-            itemTemplate: $(
-              go.Panel,
-              $(
-                go.Shape,
-                { stroke: null, strokeWidth: 0 },
-                new go.Binding("fill", "", attrFill),
-                new go.Binding("geometry", "", maleGeometry)
-              )
-            ),
-          },
-          new go.Binding("itemArray", "a")
-        ),
-
-        $(
-          go.TextBlock,
-          {
-            textAlign: "center",
-            verticalAlignment: go.Spot.Center,
-            maxSize: new go.Size(80, NaN),
-            font: "16px serif",
-            editable: true,
-          },
-          new go.Binding("text", "anios")
-        )
-      ),
-
-      $(
-        go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: true },
-        new go.Binding("text", "n")
-      ),
-      $(
-        go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: true },
-        new go.Binding("text", "codigo")
-      )
-    )
-  );
-  //madre soltera
-  diagram.nodeTemplateMap.add(
-    "madreSoltera", // Miscarriage
-    $(
-      go.Node,
-      "Vertical",
-      {
-        locationSpot: go.Spot.Center,
-        locationObjectName: "ICON",
-        selectionObjectName: "ICON",
-      },
-      $(
-        go.Panel,
-        "Spot",
-        {
-          itemTemplate: $(
-            go.Panel,
-            $(
-              go.Shape,
-              {
-                strokeWidth: 1,
-                height: 40,
-                width: 30,
-                margin: 2,
-                angle: 25,
-              },
-              new go.Binding("stroke", "", colorApuntador),
-              new go.Binding("fill", "", colorApuntador),
-              new go.Binding("geometry", "", (e) => {
-                if (e == "AP") {
-                  return flecha;
-                } else {
-                  return tlarc;
-                }
-              })
-            ),
-            { alignment: new go.Spot(0, 1, 50, 0) }
-          ),
-        },
-        new go.Binding("itemArray", "a")
-      ),
-      //new go.Binding("itemArray", "a"),
-
-      $(
-        go.Panel,
-        "Auto",
-        { name: "ICON" },
-
-        $(
-          go.Shape,
-          {
-            width: 50,
-            height: 50,
-            strokeWidth: 1.5,
-            fill: "white",
-
-            stroke: "#a1a1a1",
-
-            geometryString: `M230.79999 322.29999
-          m-109 0
-          a109 106.5 0 1 0 218 0
-          a109 106.5 0 1 0 -218 0
-          M144.98099 322.966
-          l83 -95.50001
-          l83 95.50001
-          l-83 95.50001
-          l-83 -95.50001`,
-          },
-          new go.Binding("fill", "a", (e) => {
-            console.log(e);
-            if (e.includes("S")) {
-              return "#0B9BFE";
-            } else {
-              return "white";
-            }
-          })
-        ),
-
-        $(
-          go.Panel,
-          {
-            itemTemplate: $(
-              go.Panel,
-              $(
-                go.Shape,
-                { stroke: null, strokeWidth: 0 },
-                new go.Binding("fill", "", attrFill),
-                new go.Binding("geometry", "", maleGeometry)
-              )
-            ),
-          },
-          new go.Binding("itemArray", "a")
-        ),
-
-        $(
-          go.TextBlock,
-          {
-            textAlign: "center",
-            verticalAlignment: go.Spot.Center,
-            maxSize: new go.Size(80, NaN),
-            font: "16px serif",
-            editable: true,
-          },
-          new go.Binding("text", "anios")
-        )
-      ),
-      $(
-        go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(80, NaN), editable: true },
-        new go.Binding("text", "n")
-      ),
-      $(
-        go.TextBlock,
-        { textAlign: "center", maxSize: new go.Size(100, NaN), editable: true },
-        new go.Binding("text", "codigo")
-      )
-    )
-  );
-
-  //aborto-espontaneo
-  diagram.nodeTemplateMap.add(
-    "ESPONTÁNEO", // Miscarriage
-    $(
-      go.Node,
-      "Vertical",
-      {
-        locationSpot: go.Spot.Center,
-        locationObjectName: "ICON",
-        selectionObjectName: "ICON",
-      },
+      // Panel para el símbolo de aborto espontáneo (Circulo negro)
       $(
         go.Panel,
         "Auto",
@@ -1044,16 +700,20 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
       )
     )
   );
+
+  //Plantilla: Aborto Inducido
   diagram.nodeTemplateMap.add(
-    "INDUCIDO", // Miscarriage
+    "INDUCIDO",
     $(
       go.Node,
-      "Vertical",
+      "Vertical", // Diseño vertical: los elementos se ubican uno encima del otro
       {
+        // Ubicación y selección del nodo en el diagrama
         locationSpot: go.Spot.Center,
         locationObjectName: "ICON",
         selectionObjectName: "ICON",
       },
+      // Panel para el símbolo de aborto inducido (X)
       $(
         go.Panel,
         "Auto",
@@ -1071,6 +731,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
     )
   );
 
+  
   diagram.nodeTemplateMap.add(
     "LinkLabel",
     $(go.Node, {
@@ -1083,12 +744,13 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
 
   setupDiagram(diagram, genoData, 4 /* focus on this person */);
 
-  diagram.linkTemplate = // for parent-child relationships
+  //Plantilla para los enlaces
+  diagram.linkTemplate =
     $(
       go.Link,
       new go.Binding("routing", "routing"),
       {
-        corner: 5,
+        corner: 0,
         layerName: "Background",
         selectable: false,
         fromSpot: go.Spot.Bottom,
@@ -1097,46 +759,25 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
       $(go.Shape, { stroke: "#424242", strokeWidth: 2 })
     );
 
-  /*
-    A continuacion se presentan el tipo de enlace que haria la union de cada uno de los nodos:
-  
-  diagram.linkTemplateMap.add("CASADO/A", ...): Define una plantilla para un tipo específico de enlace, en este caso, para relaciones de matrimonio.
-  
-  go.Link, { selectable: false }, ...: Define un enlace, con la opción de que no sea seleccionable.
-  
-  $(go.Panel, "Vertical", ...): Define un panel que representa la etiqueta del enlace. En este caso, contiene un bloque de texto para mostrar información sobre el enlace, como el texto "fu" vinculado a los datos del modelo.
-  
-  $(go.TextBlock, {...}, new go.Binding("text", "fu")): Define un bloque de texto con ciertas propiedades, como alineación a la izquierda, y se vincula dinámicamente al dato "fu" del modelo.
-  
-  $(go.Shape, {...}): Define una forma (en este caso, una línea) que representa visualmente el enlace.
-  
-  stroke: "#000000", strokeWidth: 2.5: Establece el color del trazo (línea) y su ancho.
-  
-  geometryString: "M0 0 L1 0 M0 3 L1 3": Define la forma de la línea utilizando una cadena de geometría SVG. En este caso, la cadena especifica una línea recta.
-  
-  
-  
-  
-    */
+ 
+  // ? PLANTILLA DE UNIONES (ESTADO CIVIL)
 
-  //casados
+  // Casado/a
   diagram.linkTemplateMap.add(
-    "CASADO/A", // for marriage relationships
+    "CASADO/A", 
     $(
-      go.Link,
+      go.Link, 
 
       { selectable: false },
+
+      // Panel para el texto de fecha de unión
       $(
         go.Panel,
-        "Vertical", // this whole Panel is a link label
-        //$(go.Shape, "Circle", { fill: "yellow", stroke: "gray" }),
+        "Vertical", 
         $(
           go.TextBlock,
           {
-            //margin: 3 ,
-
             alignment: go.Spot.Left,
-            // segmentOrientation: go.Link.Auto,
           },
           new go.Binding("text", "fu")
         ),
@@ -1144,7 +785,7 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           height: 30,
         }
       ),
-
+      // Shape (linea recta)
       $(
         go.Shape,
         { isPanelMain: true, stroke: "transparent", strokeWidth: 3 },
@@ -1155,18 +796,19 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           geometryString: "M0 0 L1 0 M0 3 L1 3" /* blue */,
         }
 
-        //new go.Binding("pathPattern", "patt", "M0 0 L1 0 M0 3 L1 3"),
       )
     )
   );
-  //separacion
+
+  // Separado/a
   diagram.linkTemplateMap.add(
-    "SEPARACIÓN", // for marriage relationships
+    "SEPARACIÓN",
     $(
       go.Link,
 
       { selectable: false },
 
+      // Shape (linea recta)
       $(
         go.Shape,
         {
@@ -1175,37 +817,24 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           geometryString: "M0 0 L1 0 M0 3 L1 3" /* blue */,
         }
 
-        //new go.Binding("pathPattern", "patt", "M0 0 L1 0 M0 3 L1 3"),
       ),
-      //tipo_union,
-
+      // Shape (linea tipo slash)
       $(go.Shape, {
         fill: "black",
         stroke: "black",
         strokeWidth: 2,
         segmentIndex: 0.1,
         segmentFraction: 0.7,
-
-        // geometry:go.Geometry.parse(
-        //   "F M20 0 l13 10"+"F M20 0 l13 10"
-        // )
-        //strokeDashArray: [4, 2] , lienas entrecortadas
-        // This SVG-style path creates a thick "+" figure:,
-
         geometry: go.Geometry.parse("F M0 10 l13 -10"),
       }),
-
+      // Panel para el texto de fecha de unión
       $(
         go.Panel,
-        "Vertical", // this whole Panel is a link label
-        //$(go.Shape, "Circle", { fill: "yellow", stroke: "gray" }),
+        "Vertical",
         $(
           go.TextBlock,
           {
-            //margin: 3 ,
-
             alignment: go.Spot.Left,
-            // segmentOrientation: go.Link.Auto,
           },
           new go.Binding("text", "fu")
         ),
@@ -1215,14 +844,15 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
       )
     )
   );
-  // divorcio
+
+  // Divorciado/a
   diagram.linkTemplateMap.add(
-    "DIVORCIO", // for marriage relationships
+    "DIVORCIO", 
     $(
       go.Link,
 
       { selectable: false },
-
+      // Shape (linea recta)
       $(
         go.Shape,
         {
@@ -1231,37 +861,25 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           geometryString: "M0 0 L1 0 M0 3 L1 3" /* blue */,
         }
 
-        //new go.Binding("pathPattern", "patt", "M0 0 L1 0 M0 3 L1 3"),
       ),
-      //tipo_union,
-
+      // Shape (linea tipo slash doble)
       $(go.Shape, {
         fill: "black",
         stroke: "black",
         strokeWidth: 2,
         segmentIndex: 0.1,
         segmentFraction: 0.7,
-
-        // geometry:go.Geometry.parse(
-        //   "F M20 0 l13 10"+"F M20 0 l13 10"
-        // )
-        //strokeDashArray: [4, 2] , lienas entrecortadas
-        // This SVG-style path creates a thick "+" figure:,
 
         geometry: go.Geometry.parse("F M0 10 l13 -10 M9 10 l13 -10"),
       }),
-
+      // Panel para el texto de fecha de unión
       $(
         go.Panel,
-        "Vertical", // this whole Panel is a link label
-        //$(go.Shape, "Circle", { fill: "yellow", stroke: "gray" }),
+        "Vertical", 
         $(
           go.TextBlock,
           {
-            //margin: 3 ,
-
             alignment: go.Spot.Left,
-            // segmentOrientation: go.Link.Auto,
           },
           new go.Binding("text", "fu")
         ),
@@ -1271,29 +889,23 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
       )
     )
   );
-  //union libre
+
+  // Union Libre
   diagram.linkTemplateMap.add(
-    "UNIÓN LIBRE", // for marriage relationships
+    "UNIÓN LIBRE", 
     $(
       go.Link,
 
       { selectable: false },
 
-      //tipo_union,
-      //$(go.TextBlock, "left", { segmentOffset: new go.Point(0, -10) }),
-      //$(go.Shape, { stroke: "transparent", fill: "transparent" }),
-
+      // Panel para el texto de fecha de unión
       $(
         go.Panel,
-        "Vertical", // this whole Panel is a link label
-        //$(go.Shape, "Circle", { fill: "yellow", stroke: "gray" }),
+        "Vertical",
         $(
           go.TextBlock,
           {
-            //margin: 3 ,
-
             alignment: go.Spot.Left,
-            // segmentOrientation: go.Link.Auto,
           },
           new go.Binding("text", "fu")
         ),
@@ -1301,58 +913,102 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           height: 30,
         }
       ),
+      // Shape (Linea entre-cortada)
+      $(
+        go.Shape, 
+        { isPanelMain: true, stroke: "transparent", strokeWidth: 3 },
 
+        new go.Binding("pathPattern", () =>
+          $(go.Shape, {
+            geometryString: "M0 0 M4 0 L4.1 0",
+
+            fill: "transparent",
+            stroke: "#000000",
+            strokeWidth: 1.3,
+            strokeCap: "round",
+          })
+        )
+      )
+    )
+  );
+
+  // Union Libre Separados
+  diagram.linkTemplateMap.add(
+    "UNION LIBRE SEPARADADOS",
+    $(
+      go.Link,
+
+      { selectable: false },
+
+      // Panel para el texto de fecha de unión
+      $(
+        go.Panel,
+        "Vertical", 
+        $(
+          go.TextBlock,
+          {
+            alignment: go.Spot.Left,
+          },
+          new go.Binding("text", "fu")
+        ),
+        {
+          height: 30,
+        }
+      ),
+      // Shape (Linea entre-cortada)
+      $(
+        go.Shape,
+        { isPanelMain: true, stroke: "transparent", strokeWidth: 3 },
+        new go.Binding("pathPattern", () =>
+          $(go.Shape, {
+            geometryString: "M0 0 M4 0 L4.1 0",
+
+            fill: "transparent",
+            stroke: "#000000",
+            strokeWidth: 1.3,
+            strokeCap: "round",
+          })
+        )
+      ),
+      //Shape (Linea tipo slash)
+      $(go.Shape, {
+        fill: "black",
+        stroke: "black",
+        strokeWidth: 2,
+        segmentIndex: 0.1,
+        segmentFraction: 0.7,
+
+        geometry: go.Geometry.parse("F M0 10 l13 -10"),
+      }),
+      
       // $(
       //   go.TextBlock,
       //   {
       //     segmentOffset: new go.Point(0, -10),
-      //     //font: "16px serif",
-      //     //segmentOrientation: go.Link.OrientUpright,
-      //     //margin:20
+      //     font: "16px serif",
+      //     segmentOrientation: go.Link.OrientUpright,
       //   },
-      //   new go.Binding("text", "fu"),
-      //   new go.Binding("segmentOffset", new go.Point(0, -10)),
-      //   new go.Binding("segmentOrientation", go.Link.OrientUpright)
-      // ),
-
-      $(
-        go.Shape, // the link's path shape
-        { isPanelMain: true, stroke: "transparent", strokeWidth: 3 },
-
-        new go.Binding("pathPattern", () =>
-          $(go.Shape, {
-            geometryString: "M0 0 M4 0 L4.1 0",
-
-            fill: "transparent",
-            stroke: "#000000",
-            strokeWidth: 1.3,
-            strokeCap: "round",
-          })
-        )
-      )
+      //   new go.Binding("text", "ec")
+      // )
     )
   );
 
-  //separacion libre
+  // Union Consanguinea
   diagram.linkTemplateMap.add(
-    "UNION LIBRE SEPARADADOS", // for marriage relationships
+    "UNIÓN CONSANGUÍNEA",
     $(
       go.Link,
 
       { selectable: false },
 
-      //tipo_union,
+      // Panel para el texto de fecha de unión
       $(
         go.Panel,
-        "Vertical", // this whole Panel is a link label
-        //$(go.Shape, "Circle", { fill: "yellow", stroke: "gray" }),
+        "Vertical", 
         $(
           go.TextBlock,
           {
-            //margin: 3 ,
-
             alignment: go.Spot.Left,
-            // segmentOrientation: go.Link.Auto,
           },
           new go.Binding("text", "fu")
         ),
@@ -1360,77 +1016,9 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
           height: 30,
         }
       ),
+      // Shape (doble linea)
       $(
-        go.Shape, // the link's path shape
-        { isPanelMain: true, stroke: "transparent", strokeWidth: 3 },
-        new go.Binding("pathPattern", () =>
-          $(go.Shape, {
-            geometryString: "M0 0 M4 0 L4.1 0",
-
-            fill: "transparent",
-            stroke: "#000000",
-            strokeWidth: 1.3,
-            strokeCap: "round",
-          })
-        )
-      ),
-
-      $(go.Shape, {
-        fill: "black",
-        stroke: "black",
-        strokeWidth: 2,
-        segmentIndex: 0.1,
-        segmentFraction: 0.7,
-
-        // geometry:go.Geometry.parse(
-        //   "F M20 0 l13 10"+"F M20 0 l13 10"
-        // )
-        //strokeDashArray: [4, 2] , lienas entrecortadas
-        // This SVG-style path creates a thick "+" figure:,
-
-        geometry: go.Geometry.parse("F M0 10 l13 -10"),
-      }),
-      $(
-        go.TextBlock,
-        {
-          segmentOffset: new go.Point(0, -10),
-          font: "16px serif",
-          segmentOrientation: go.Link.OrientUpright,
-        },
-        new go.Binding("text", "ec")
-      )
-    )
-  );
-
-  // union consaquinea
-  diagram.linkTemplateMap.add(
-    "UNIÓN CONSANGUÍNEA", // for marriage relationships
-    $(
-      go.Link,
-
-      { selectable: false },
-
-      //tipo_union,
-      $(
-        go.Panel,
-        "Vertical", // this whole Panel is a link label
-        //$(go.Shape, "Circle", { fill: "yellow", stroke: "gray" }),
-        $(
-          go.TextBlock,
-          {
-            //margin: 3 ,
-
-            alignment: go.Spot.Left,
-            // segmentOrientation: go.Link.Auto,
-          },
-          new go.Binding("text", "fu")
-        ),
-        {
-          height: 30,
-        }
-      ),
-      $(
-        go.Shape, // the link's path shape
+        go.Shape, 
         { isPanelMain: true, stroke: "transparent", strokeWidth: 3 },
         new go.Binding("pathPattern", () =>
           $(go.Shape, {
@@ -1469,11 +1057,13 @@ Define un tercer bloque de texto con propiedades similares, pero vinculado a los
 
   return diagram;
 }
+
+//? Funciones para establecer relaciones de estado civil y padre-hijo
 /*
-Esta función configura el diagrama con los datos proporcionados en el parámetro array. Luego, selecciona el nodo con la clave focusId, 
-si está presente en el diagrama. También llama a dos funciones adicionales: setupMarriages(diagram) y setupParents(diagram)
- para configurar los enlaces de matrimonio y los padres en el diagrama, respectivamente.
-function findMarriage(diagram, a, b) { ... }:
+Esta función configura el diagrama con los datos proporcionados en el parámetro array. Luego, selecciona 
+el nodo con la clave focusId, si está presente en el diagrama. También llama a dos funciones adicionales: 
+setupMarriages(diagram) y setupParents(diagram) para configurar los enlaces de estado civil y los padres en 
+el diagrama, respectivamente.
 */
 function setupDiagram(diagram, array, focusId) {
   diagram.model = go.GraphObject.make(go.GraphLinksModel, {
@@ -1493,29 +1083,16 @@ function setupDiagram(diagram, array, focusId) {
   var node = diagram.findNodeForKey(focusId);
   if (node !== null) {
     diagram.select(node);
-    // remove any spouse for the person under focus:
-    //node.linksConnected.each(function(l) {
-    //  if (!l.isLabeledLink) return;
-    //  l.opacity = 0;
-    //  var spouse = l.getOtherNode(node);
-    //  spouse.opacity = 0;
-    //  spouse.pickable = false;
-    //});
   }
 }
 
 
 /*
-
-Esta función busca un enlace específico (relación matrimonial) entre dos nodos identificados por las claves a y b.
- Primero, busca los nodos correspondientes en el diagrama utilizando sus claves. Luego,
-  busca el enlace entre estos nodos y devuelve el primer enlace que encuentre con una categoría que corresponda a una relación matrimonial 
-  (como "CASADO/A", "DIVORCIO", etc.). Si no se encuentra ninguna relación matrimonial, devuelve null
-
-
+Esta función busca un enlace específico de estado civil entre dos nodos identificados por las claves 
+a y b.Primero, busca los nodos correspondientes en el diagrama utilizando sus claves. 
+Luego, busca el enlace entre estos nodos y devuelve el primer enlace que encuentre con una categoría que 
+corresponda a una relacion (estado civil). Si no se encuentra ninguna relación, devuelve null.
 */
-
-
 function findMarriage(diagram, a, b) {
   // A and B are node keys
   var nodeA = diagram.findNodeForKey(a);
@@ -1524,7 +1101,6 @@ function findMarriage(diagram, a, b) {
     var it = nodeA.findLinksBetween(nodeB); // in either direction
     while (it.next()) {
       var link = it.value;
-      // Link.data.category === "Marriage" means it's a marriage relationship
       if (link.data !== null && link.data.category === "CASADO/A") return link;
       if (link.data !== null && link.data.category === "DIVORCIO") return link;
       if (link.data !== null && link.data.category === "SEPARACIÓN")
@@ -1544,15 +1120,11 @@ function findMarriage(diagram, a, b) {
   return null;
 }
 
-
-
-
 /*
-Esta función procesa los datos de los nodos para determinar las relaciones matrimoniales. 
-Recorre todos los nodos del diagrama y busca datos relacionados con matrimonios (ux y vir). 
-Si se encuentran datos de matrimonio, agrega enlaces de matrimonio y etiquetas de enlace necesarias al modelo del diagrama.
-
-
+Esta función procesa los datos de los nodos para determinar las relaciones de estado civil. 
+Recorre todos los nodos del diagrama y busca datos relacionados con las relaciones (ux y vir). 
+Si se encuentran datos de relacion, agrega enlaces de estado civil y etiquetas de enlace 
+necesarias al modelo del diagrama.
 */
 function setupMarriages(diagram) {
   var model = diagram.model;
@@ -1562,34 +1134,13 @@ function setupMarriages(diagram) {
     var key = data.key;
     var uxs = data.ux;
     var category_data = data.ec;
-    //console.log(category_data)
     if (data.h !== undefined) {
-      //nuevos cambios
       var h = data.h;
       data.s = h;
     }
 
-    // if (
-    //   data.s == "M" &&
-    //   category_data == "SOLTERO/A" &&
-    //   data.f === undefined &&
-    //   data.m === undefined
-    // ) {
-    //   data.s = "padreSoltero";
-    // }
-    // if (
-    //   data.s == "F" &&
-    //   category_data == "SOLTERO/A" &&
-    //   data.f === undefined &&
-    //   data.m === undefined
-    // ) {
-    //   data.s = "madreSoltera";
-    // }
-
     if (uxs !== undefined && uxs !== null) {
-      // if (category_data == "SOLTERO/A") {
-      //   data.s = "madreSoltera";
-      // }
+
       if (typeof uxs === "number") uxs = [uxs];
       for (var j = 0; j < uxs.length; j++) {
         var wife = uxs[j];
@@ -1617,10 +1168,6 @@ function setupMarriages(diagram) {
     }
     var virs = data.vir;
     if (virs !== undefined) {
-      // console.log("llego aqui");
-      // if (category_data == "SOLTERO/A") {
-      //   data.s = "padreSoltero";
-      // }
       if (typeof virs === "number") virs = [virs];
       for (var j = 0; j < virs.length; j++) {
         var husband = virs[j];
@@ -1650,13 +1197,10 @@ function setupMarriages(diagram) {
 }
 
 /*
-
-
-
-Esta función procesa las relaciones padre-hijo una vez que se conocen todos los matrimonios. Recorre todos los nodos del diagrama y busca datos relacionados con padres (m y f).
- Si se encuentran datos de padres, busca el enlace de matrimonio correspondiente y agrega enlaces de relación padre-hijo al modelo del diagrama.
-
-
+Esta función procesa las relaciones padre-hijo una vez que se conocen todos las relaciones de estado civil. 
+Recorre todos los nodos del diagrama y busca datos relacionados con padres (m y f).Si se 
+encuentran datos de padres, busca el enlace de estado civil correspondiente y agrega enlaces 
+de relación padre-hijo al modelo del diagrama.
 */
 function setupParents(diagram) {
   var model = diagram.model;
@@ -1689,18 +1233,30 @@ function setupParents(diagram) {
         var cdata = { from: mlabkey, to: key, routing: go.Link.Orthogonal };
       }
       diagram.model.addLinkData(cdata);
-      // diagram.model.addLinkDataCollection(cdata);
     }
   }
 }
+
+/*
+Este código define un layout personalizado (GenogramLayout) para representar un genograma
+heredando las características y funcionalidades de go.LayeredDigraphLayout.
+*/
 
 function GenogramLayout() {
   go.LayeredDigraphLayout.call(this);
   this.initializeOption = go.LayeredDigraphLayout.InitDepthFirstIn;
   this.spouseSpacing = 30; // minimum space between spouses
 }
+
+// Constructor
 go.Diagram.inherit(GenogramLayout, go.LayeredDigraphLayout);
 
+/*
+El resto del código define métodos adicionales para el layout, como makeNetwork, add, extendCohort, 
+assignLayers y commitNodes, que se utilizan para generar la disposición y distribución correctas 
+de los nodos en el genograma. También hay un método findParentsMarriageLabelNode para encontrar el 
+nodo de etiqueta de matrimonio de un nodo dado.
+*/
 GenogramLayout.prototype.makeNetwork = function (coll) {
   // generate LayoutEdges for each parent-child Link
   var net = this.createNetwork();
@@ -1960,12 +1516,15 @@ function handleModelChange(e) {
   console.log(e);
 }
 
+/*
+Finalmente,este componente genera un genograma con GoJS (a través de ReactDiagram) 
+y proporciona un botón para guardar el genograma como imagen SVG. Pero aun falta etiquetar
+con los datos de la familia correspondiente. Eso se hace en page.jsx
+*/
 const Genogram = (props) => {
   genoData = props.Genogram;
 
-  //console.log(genoData);
   const idFamilia = props.idFamilia;
-  //console.log(genoData);
   const [show, setShow] = useState(false);
 
   return (
@@ -1981,30 +1540,12 @@ const Genogram = (props) => {
           className="btn btn-primary"
           onClick={async () => {
             var svg = diagram.makeSvg();
-
-            //console.log(img)
             var serializer = new XMLSerializer();
             var svgString = serializer.serializeToString(svg);
-            // Crear un objeto Blob con los datos del SVG y el tipo MIME
-            //var blob = new Blob([svgString], { type: "image/svg+xml" });
-            // Crear una URL temporal que apunte al objeto Blob
-            //var url = URL.createObjectURL(blob);
-
             await saveImagenGenograma(svgString, idFamilia).then((data) => {
               setShow(true);
             });
 
-            //console.log(img);
-            // var newWindow = window.open("", "newWindow");
-            // if (!newWindow) return;
-            // var newDocument = newWindow.document;
-            // var svg = diagram.makeSvg({
-            //   document: newDocument, // create SVG DOM in new document context
-            //   //scale: 9,
-            //   //size: new go.Size(10000,NaN)
-
-            // });
-            // newDocument.body.appendChild(svg);
           }}
         >
           Guardar Familiograma

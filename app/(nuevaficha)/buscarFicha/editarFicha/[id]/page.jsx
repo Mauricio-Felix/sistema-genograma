@@ -69,10 +69,6 @@ export default async function AgregarPersonaEdit({ params, searchParams }) {
             tabIndex="0"
           >
             <InfoPersonal
-              // etnias={etnias}
-              // ocupaciones={ocupaciones}
-              // instrucciones={instrucciones}
-              // pueblos={pueblos}
               parentescos={parentescos}
               datosFamiliar={datosFamiliar}
               data={{

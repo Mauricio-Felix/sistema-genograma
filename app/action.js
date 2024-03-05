@@ -8,7 +8,7 @@ import { obetnerIdsAndMerge } from "./utils/obtenerId";
 import { writeFile } from "fs/promises";
 import path, { format } from "path";
 
-//FUNCIONES DE REGISTRAR INFORMACION
+//? FUNCIONES DE REGISTRAR INFORMACION
 
 export async function saveFamilia(formData, id) {
 
@@ -188,7 +188,7 @@ export async function saveImagenGenograma(img, id) {
   return filePath;
 }
 
-//FUNCIONES PARA EXTRAER INFORMACION
+//? FUNCIONES PARA EXTRAER INFORMACION
 
 export async function getParentesco() {
   const result = await conn.query(`SELECT csctbparentescoid, nom_parentesco
@@ -458,7 +458,7 @@ export async function getDiagnosticoFamiliar(id_familia) {
   return result.rows;
 }
 
-//FUNCIONES PARA EDITAR DE INFORMACION
+//? FUNCIONES PARA EDITAR DE INFORMACION
 
 export async function updateFamiliaById(formData, id) {
   try {
